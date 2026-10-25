@@ -70,12 +70,12 @@ bool AppLauncherIcon::begin(lv_obj_t *parent)
     lv_obj_add_style(main_obj.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
     lv_obj_set_flex_flow(main_obj.get(), LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(main_obj.get(), LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    lv_obj_clear_flag(main_obj.get(), LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_add_flag(main_obj.get(), LV_OBJ_FLAG_EVENT_BUBBLE);
+    lv_obj_set_scrollable(main_obj.get(), false);
+    lv_obj_set_event_bubble(main_obj.get(), true);
     // Icon
     lv_obj_add_style(icon_main_obj.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
-    lv_obj_clear_flag(icon_main_obj.get(), LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_add_flag(icon_main_obj.get(), LV_OBJ_FLAG_EVENT_BUBBLE);
+    lv_obj_set_scrollable(icon_main_obj.get(), false);
+    lv_obj_set_event_bubble(icon_main_obj.get(), true);
     // Image
     lv_obj_add_style(icon_image_obj.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
     lv_obj_center(icon_image_obj.get());
@@ -84,8 +84,9 @@ bool AppLauncherIcon::begin(lv_obj_t *parent)
     lv_obj_set_style_img_recolor_opa(icon_image_obj.get(), _info.image.recolor.opacity, 0);
     // lv_obj_set_size(icon_image_obj.get(), LV_SIZE_CONTENT, LV_SIZE_CONTENT);
     lv_image_set_inner_align(icon_image_obj.get(), LV_IMAGE_ALIGN_CENTER);
-    lv_obj_add_flag(icon_image_obj.get(), LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_EVENT_BUBBLE);
-    lv_obj_clear_flag(icon_image_obj.get(), LV_OBJ_FLAG_PRESS_LOCK);
+    lv_obj_set_clickable(icon_image_obj.get(), true);
+    lv_obj_set_event_bubble(icon_image_obj.get(), true);
+    lv_obj_set_press_lock(icon_image_obj.get(), false);
     lv_obj_add_event_cb(icon_image_obj.get(), onIconTouchEventCallback, LV_EVENT_PRESSED, this);
     lv_obj_add_event_cb(icon_image_obj.get(), onIconTouchEventCallback, LV_EVENT_PRESS_LOST, this);
     lv_obj_add_event_cb(icon_image_obj.get(), onIconTouchEventCallback, LV_EVENT_RELEASED, this);
@@ -133,9 +134,9 @@ bool AppLauncherIcon::toggleClickable(bool clickable)
     ESP_UTILS_CHECK_FALSE_RETURN(checkInitialized(), false, "Icon is not initialized");
 
     if (clickable) {
-        lv_obj_add_flag(_icon_image_obj.get(), LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_set_clickable(_icon_image_obj.get(), true);
     } else {
-        lv_obj_clear_flag(_icon_image_obj.get(), LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_set_clickable(_icon_image_obj.get(), false);
     }
     _flags.is_click_disable = !clickable;
 

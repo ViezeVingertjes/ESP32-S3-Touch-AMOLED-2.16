@@ -72,15 +72,15 @@ bool RecentsScreen::begin(lv_obj_t *parent)
     lv_obj_add_style(main_obj.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
     lv_obj_set_flex_flow(main_obj.get(), LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(main_obj.get(), LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    lv_obj_clear_flag(main_obj.get(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollable(main_obj.get(), false);
     // Memory
     if (_data.flags.enable_memory) {
         // Object
         lv_obj_add_style(memory_obj.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
-        lv_obj_clear_flag(memory_obj.get(), LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_set_scrollable(memory_obj.get(), false);
         // Label
         lv_obj_add_style(memory_label.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
-        lv_obj_clear_flag(memory_label.get(), LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_set_scrollable(memory_label.get(), false);
     }
     // Snapshot snapshot_table
     lv_obj_add_style(snapshot_table.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
@@ -88,17 +88,17 @@ bool RecentsScreen::begin(lv_obj_t *parent)
     lv_obj_set_flex_align(snapshot_table.get(), LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_scrollbar_mode(snapshot_table.get(), LV_SCROLLBAR_MODE_OFF);
     lv_obj_set_scroll_snap_x(snapshot_table.get(), LV_SCROLL_SNAP_CENTER);
-    lv_obj_clear_flag(snapshot_table.get(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollable(snapshot_table.get(), false);
     // Trash
     lv_obj_add_style(trash_obj.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
-    lv_obj_clear_flag(trash_obj.get(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollable(trash_obj.get(), false);
     // Transh icon
     lv_obj_center(trash_icon.get());
     lv_obj_add_style(trash_icon.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
     // lv_obj_set_size(trash_icon.get(), LV_SIZE_CONTENT, LV_SIZE_CONTENT);
     lv_image_set_inner_align(trash_icon.get(), LV_IMAGE_ALIGN_CENTER);
-    lv_obj_add_flag(trash_icon.get(), LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_clear_flag(trash_icon.get(), LV_OBJ_FLAG_PRESS_LOCK);
+    lv_obj_set_clickable(trash_icon.get(), true);
+    lv_obj_set_press_lock(trash_icon.get(), false);
     lv_obj_add_event_cb(trash_icon.get(), onTrashTouchEventCallback, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(trash_icon.get(), onTrashTouchEventCallback, LV_EVENT_PRESSED, this);
     lv_obj_add_event_cb(trash_icon.get(), onTrashTouchEventCallback, LV_EVENT_PRESS_LOST, this);
@@ -161,9 +161,9 @@ bool RecentsScreen::setVisible(bool visible) const
     ESP_UTILS_CHECK_FALSE_RETURN(checkInitialized(), false, "Not initialized");
 
     if (visible) {
-        lv_obj_clear_flag(_main_obj.get(), LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_hidden(_main_obj.get(), false);
     } else {
-        lv_obj_add_flag(_main_obj.get(), LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_hidden(_main_obj.get(), true);
     }
 
     return true;
@@ -217,9 +217,9 @@ bool RecentsScreen::scrollToSnapshotById(int id)
     snapshot_main_obj = _id_snapshot_map.at(id)->getMainObj();
     ESP_UTILS_CHECK_NULL_RETURN(snapshot_main_obj, false, "Invalid snapshot main object");
 
-    lv_obj_add_flag(_snapshot_table.get(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollable(_snapshot_table.get(), true);
     lv_obj_scroll_to_view(snapshot_main_obj, _data.flags.enable_table_scroll_anim ? LV_ANIM_ON : LV_ANIM_OFF);
-    lv_obj_clear_flag(_snapshot_table.get(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollable(_snapshot_table.get(), false);
 
     return true;
 }
@@ -237,9 +237,9 @@ bool RecentsScreen::scrollToSnapshotByIndex(uint8_t index)
     snapshot_main_obj = it->second->getMainObj();
     ESP_UTILS_CHECK_NULL_RETURN(snapshot_main_obj, false, "Invalid snapshot main object");
 
-    lv_obj_add_flag(_snapshot_table.get(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollable(_snapshot_table.get(), true);
     lv_obj_scroll_to_view(snapshot_main_obj, _data.flags.enable_table_scroll_anim ? LV_ANIM_ON : LV_ANIM_OFF);
-    lv_obj_clear_flag(_snapshot_table.get(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollable(_snapshot_table.get(), false);
 
     return true;
 }

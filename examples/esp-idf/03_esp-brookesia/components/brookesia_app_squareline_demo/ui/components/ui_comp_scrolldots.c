@@ -23,7 +23,7 @@ lv_obj_t *ui_panel_scrolldots_create(lv_obj_t *comp_parent)
     lv_obj_set_x(cui_panel_scrolldots, 0);
     lv_obj_set_y(cui_panel_scrolldots, -8);
     lv_obj_set_align(cui_panel_scrolldots, LV_ALIGN_BOTTOM_MID);
-    lv_obj_remove_flag(cui_panel_scrolldots, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(cui_panel_scrolldots, false);      /// Flags
     lv_obj_set_style_bg_color(cui_panel_scrolldots, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(cui_panel_scrolldots, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -32,7 +32,7 @@ lv_obj_t *ui_panel_scrolldots_create(lv_obj_t *comp_parent)
     lv_obj_set_width(cui_panel_d1, 8);
     lv_obj_set_height(cui_panel_d1, 8);
     lv_obj_set_align(cui_panel_d1, LV_ALIGN_LEFT_MID);
-    lv_obj_remove_flag(cui_panel_d1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(cui_panel_d1, false);      /// Flags
     lv_obj_set_style_radius(cui_panel_d1, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(cui_panel_d1, lv_color_hex(0xB4B6E6), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(cui_panel_d1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -44,7 +44,7 @@ lv_obj_t *ui_panel_scrolldots_create(lv_obj_t *comp_parent)
     lv_obj_set_x(cui_panel_d2, 15);
     lv_obj_set_y(cui_panel_d2, 0);
     lv_obj_set_align(cui_panel_d2, LV_ALIGN_LEFT_MID);
-    lv_obj_remove_flag(cui_panel_d2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(cui_panel_d2, false);      /// Flags
     lv_obj_set_style_radius(cui_panel_d2, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(cui_panel_d2, lv_color_hex(0xB4B6E6), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(cui_panel_d2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -56,7 +56,7 @@ lv_obj_t *ui_panel_scrolldots_create(lv_obj_t *comp_parent)
     lv_obj_set_x(cui_panel_d3, 25);
     lv_obj_set_y(cui_panel_d3, 0);
     lv_obj_set_align(cui_panel_d3, LV_ALIGN_LEFT_MID);
-    lv_obj_remove_flag(cui_panel_d3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(cui_panel_d3, false);      /// Flags
     lv_obj_set_style_radius(cui_panel_d3, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(cui_panel_d3, lv_color_hex(0xB4B6E6), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(cui_panel_d3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -68,7 +68,7 @@ lv_obj_t *ui_panel_scrolldots_create(lv_obj_t *comp_parent)
     lv_obj_set_x(cui_panel_d4, 35);
     lv_obj_set_y(cui_panel_d4, 0);
     lv_obj_set_align(cui_panel_d4, LV_ALIGN_LEFT_MID);
-    lv_obj_remove_flag(cui_panel_d4, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(cui_panel_d4, false);      /// Flags
     lv_obj_set_style_radius(cui_panel_d4, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(cui_panel_d4, lv_color_hex(0xB4B6E6), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(cui_panel_d4, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -80,7 +80,7 @@ lv_obj_t *ui_panel_scrolldots_create(lv_obj_t *comp_parent)
     lv_obj_set_x(cui_panel_d5, 45);
     lv_obj_set_y(cui_panel_d5, 0);
     lv_obj_set_align(cui_panel_d5, LV_ALIGN_LEFT_MID);
-    lv_obj_remove_flag(cui_panel_d5, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(cui_panel_d5, false);      /// Flags
     lv_obj_set_style_radius(cui_panel_d5, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(cui_panel_d5, lv_color_hex(0xB4B6E6), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(cui_panel_d5, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -92,7 +92,7 @@ lv_obj_t *ui_panel_scrolldots_create(lv_obj_t *comp_parent)
     lv_obj_set_x(cui_panel_d6, 55);
     lv_obj_set_y(cui_panel_d6, 0);
     lv_obj_set_align(cui_panel_d6, LV_ALIGN_LEFT_MID);
-    lv_obj_remove_flag(cui_panel_d6, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(cui_panel_d6, false);      /// Flags
     lv_obj_set_style_radius(cui_panel_d6, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(cui_panel_d6, lv_color_hex(0xB4B6E6), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(cui_panel_d6, 255, LV_PART_MAIN | LV_STATE_DEFAULT);

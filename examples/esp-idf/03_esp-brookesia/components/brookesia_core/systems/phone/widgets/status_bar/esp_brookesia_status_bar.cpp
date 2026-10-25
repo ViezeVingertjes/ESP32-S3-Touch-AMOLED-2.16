@@ -97,10 +97,10 @@ bool StatusBar::setVisualMode(StatusBar::VisualMode mode) const
 
     switch (mode) {
     case StatusBar::VisualMode::HIDE:
-        lv_obj_add_flag(_main_obj.get(), LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_hidden(_main_obj.get(), true);
         break;
     case StatusBar::VisualMode::SHOW_FIXED:
-        lv_obj_clear_flag(_main_obj.get(), LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_hidden(_main_obj.get(), false);
         break;
     default:
         break;
@@ -160,7 +160,7 @@ bool StatusBar::checkVisible(void) const
 {
     ESP_UTILS_CHECK_FALSE_RETURN(checkMainInitialized(), false, "Not initialized");
 
-    return !lv_obj_has_flag(_main_obj.get(), LV_OBJ_FLAG_HIDDEN);
+    return !lv_obj_is_hidden(_main_obj.get());
 }
 
 bool StatusBar::calibrateIconData(const StatusBar::Data &bar_data, const base::Display &display,
@@ -287,7 +287,7 @@ bool StatusBar::beginMain(lv_obj_t *parent)
     lv_obj_add_style(main_obj.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
     lv_obj_set_align(main_obj.get(), LV_ALIGN_TOP_MID);
     lv_obj_set_style_bg_opa(main_obj.get(), LV_OPA_COVER, 0);
-    lv_obj_clear_flag(main_obj.get(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollable(main_obj.get(), false);
     // Area
     for (size_t i = 0; i < area_objs.size(); i++) {
         lv_obj_add_style(area_objs[i].get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
@@ -306,7 +306,7 @@ bool StatusBar::beginMain(lv_obj_t *parent)
         }
         lv_obj_align(area_objs[i].get(), area_align, 0, 0);
         lv_obj_set_flex_flow(area_objs[i].get(), LV_FLEX_FLOW_ROW);
-        lv_obj_clear_flag(area_objs[i].get(), LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_set_scrollable(area_objs[i].get(), false);
     }
 
     /* Save objects */
@@ -417,11 +417,11 @@ bool StatusBar::updateBatteryByNewData(void)
     if (_data.flags.enable_battery_label) {
         if (_is_battery_lable_out_of_area) {
             _is_battery_lable_out_of_area = false;
-            lv_obj_clear_flag(_battery_label.get(), LV_OBJ_FLAG_HIDDEN);
+            lv_obj_set_hidden(_battery_label.get(), false);
         }
         if (esp_brookesia_core_utils_check_obj_out_of_parent(_battery_label.get())) {
             _is_battery_lable_out_of_area = true;
-            lv_obj_add_flag(_battery_label.get(), LV_OBJ_FLAG_HIDDEN);
+            lv_obj_set_hidden(_battery_label.get(), true);
             ESP_UTILS_LOGE("Battery label out of area, hide it");
         } else {
             lv_obj_set_style_text_color(_battery_label.get(), lv_color_hex(_data.main.text_color.color), 0);
@@ -475,7 +475,7 @@ bool StatusBar::showBatteryPercent(void) const
     ESP_UTILS_LOGD("Show battery percent(0x%p)", this);
     ESP_UTILS_CHECK_NULL_RETURN(_battery_label, false, "No battery label");
 
-    lv_obj_clear_flag(_battery_label.get(), LV_OBJ_FLAG_HIDDEN);
+    lv_obj_set_hidden(_battery_label.get(), false);
 
     return true;
 }
@@ -485,7 +485,7 @@ bool StatusBar::hideBatteryPercent(void) const
     ESP_UTILS_LOGD("Hide battery percent(0x%p)", this);
     ESP_UTILS_CHECK_NULL_RETURN(_battery_label, false, "No battery label");
 
-    lv_obj_add_flag(_battery_label.get(), LV_OBJ_FLAG_HIDDEN);
+    lv_obj_set_hidden(_battery_label.get(), true);
 
     return true;
 }
@@ -578,7 +578,7 @@ bool StatusBar::beginClock(void)
     lv_obj_set_flex_flow(clock_obj.get(), LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(clock_obj.get(), LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_style_pad_column(clock_obj.get(), 0, 0);
-    lv_obj_clear_flag(clock_obj.get(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollable(clock_obj.get(), false);
 
     _clock_obj = clock_obj;
     _clock_hour_label = clock_hour_label;
@@ -605,11 +605,11 @@ bool StatusBar::updateClockByNewData(void)
 
     if (_is_clock_out_of_area) {
         _is_clock_out_of_area = false;
-        lv_obj_clear_flag(_clock_obj.get(), LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_hidden(_clock_obj.get(), false);
     }
     if (esp_brookesia_core_utils_check_obj_out_of_parent(_clock_obj.get())) {
         _is_clock_out_of_area = true;
-        lv_obj_add_flag(_clock_obj.get(), LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_hidden(_clock_obj.get(), true);
         ESP_UTILS_LOGE("Clock out of area, hide it");
     } else {
         lv_obj_set_style_text_color(_clock_hour_label.get(), lv_color_hex(_data.main.text_color.color), 0);
@@ -649,10 +649,10 @@ bool StatusBar::setClockFormat(ClockFormat format) const
 
     switch (format) {
     case ClockFormat::FORMAT_12H:
-        lv_obj_clear_flag(_clock_period_label.get(), LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_hidden(_clock_period_label.get(), false);
         break;
     case ClockFormat::FORMAT_24H:
-        lv_obj_add_flag(_clock_period_label.get(), LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_hidden(_clock_period_label.get(), true);
         break;
     default:
         ESP_UTILS_CHECK_FALSE_RETURN(false, false, "Invalid clock format");

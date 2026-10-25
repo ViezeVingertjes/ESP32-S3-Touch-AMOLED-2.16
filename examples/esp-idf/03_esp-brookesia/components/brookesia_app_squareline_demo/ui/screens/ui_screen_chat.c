@@ -13,7 +13,7 @@
 void ui_screen_chat_screen_init(void)
 {
     ui_screen_chat = lv_obj_create(NULL);
-    lv_obj_remove_flag(ui_screen_chat, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(ui_screen_chat, false);      /// Flags
     lv_obj_set_style_bg_image_src(ui_screen_chat, &ui_img_pattern_png, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_tiled(ui_screen_chat, true, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -37,7 +37,7 @@ void ui_screen_chat_screen_init(void)
     lv_obj_set_width(ui_chat_panel_c1, lv_pct(100));
     lv_obj_set_x(ui_chat_panel_c1, 0);
     lv_obj_set_y(ui_chat_panel_c1, 60);
-    lv_obj_remove_flag(ui_chat_panel_c1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(ui_chat_panel_c1, false);      /// Flags
     lv_obj_set_style_bg_color(ui_chat_panel_c1, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_chat_panel_c1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_left(ui_chat_panel_c1, 12, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -48,7 +48,7 @@ void ui_screen_chat_screen_init(void)
     ui_chat_panel_chat_panel1 = lv_obj_create(ui_chat_panel_c1);
     lv_obj_set_width(ui_chat_panel_chat_panel1, 169);
     lv_obj_set_height(ui_chat_panel_chat_panel1, 81);
-    lv_obj_remove_flag(ui_chat_panel_chat_panel1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(ui_chat_panel_chat_panel1, false);      /// Flags
     lv_obj_set_style_radius(ui_chat_panel_chat_panel1, 12, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_chat_panel_chat_panel1, lv_color_hex(0x9C9CD9), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_chat_panel_chat_panel1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -73,8 +73,8 @@ void ui_screen_chat_screen_init(void)
     lv_obj_set_height(ui_chat_image_chat_icon1, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_chat_image_chat_icon1, 0);
     lv_obj_set_y(ui_chat_image_chat_icon1, 80);
-    lv_obj_add_flag(ui_chat_image_chat_icon1, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_remove_flag(ui_chat_image_chat_icon1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_adv_hittest(ui_chat_image_chat_icon1, true);     /// Flags
+    lv_obj_set_scrollable(ui_chat_image_chat_icon1, false);      /// Flags
     lv_obj_set_style_image_recolor(ui_chat_image_chat_icon1, lv_color_hex(0x9C9CD9), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_image_recolor_opa(ui_chat_image_chat_icon1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -83,7 +83,7 @@ void ui_screen_chat_screen_init(void)
     lv_obj_set_width(ui_chat_panel_c2, lv_pct(100));
     lv_obj_set_x(ui_chat_panel_c2, 0);
     lv_obj_set_y(ui_chat_panel_c2, 160);
-    lv_obj_remove_flag(ui_chat_panel_c2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(ui_chat_panel_c2, false);      /// Flags
     lv_obj_set_style_bg_color(ui_chat_panel_c2, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_chat_panel_c2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_left(ui_chat_panel_c2, 12, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -95,7 +95,7 @@ void ui_screen_chat_screen_init(void)
     lv_obj_set_width(ui_chat_panel_chat_panel2, 169);
     lv_obj_set_height(ui_chat_panel_chat_panel2, 81);
     lv_obj_set_align(ui_chat_panel_chat_panel2, LV_ALIGN_TOP_RIGHT);
-    lv_obj_remove_flag(ui_chat_panel_chat_panel2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(ui_chat_panel_chat_panel2, false);      /// Flags
     lv_obj_set_style_radius(ui_chat_panel_chat_panel2, 12, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_chat_panel_chat_panel2, lv_color_hex(0x293062), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_chat_panel_chat_panel2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -121,8 +121,8 @@ void ui_screen_chat_screen_init(void)
     lv_obj_set_x(ui_chat_image_chat_icon2, 0);
     lv_obj_set_y(ui_chat_image_chat_icon2, 80);
     lv_obj_set_align(ui_chat_image_chat_icon2, LV_ALIGN_TOP_RIGHT);
-    lv_obj_add_flag(ui_chat_image_chat_icon2, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_remove_flag(ui_chat_image_chat_icon2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_adv_hittest(ui_chat_image_chat_icon2, true);     /// Flags
+    lv_obj_set_scrollable(ui_chat_image_chat_icon2, false);      /// Flags
     lv_obj_set_style_image_recolor(ui_chat_image_chat_icon2, lv_color_hex(0x293062), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_image_recolor_opa(ui_chat_image_chat_icon2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -139,7 +139,7 @@ void ui_screen_chat_screen_init(void)
     lv_obj_set_width(ui_chat_panel_c3, lv_pct(100));
     lv_obj_set_x(ui_chat_panel_c3, 0);
     lv_obj_set_y(ui_chat_panel_c3, 270);
-    lv_obj_remove_flag(ui_chat_panel_c3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(ui_chat_panel_c3, false);      /// Flags
     lv_obj_set_style_bg_color(ui_chat_panel_c3, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_chat_panel_c3, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_left(ui_chat_panel_c3, 12, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -150,7 +150,7 @@ void ui_screen_chat_screen_init(void)
     ui_chat_panel_chat_panel3 = lv_obj_create(ui_chat_panel_c3);
     lv_obj_set_width(ui_chat_panel_chat_panel3, 169);
     lv_obj_set_height(ui_chat_panel_chat_panel3, 81);
-    lv_obj_remove_flag(ui_chat_panel_chat_panel3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(ui_chat_panel_chat_panel3, false);      /// Flags
     lv_obj_set_style_radius(ui_chat_panel_chat_panel3, 12, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_chat_panel_chat_panel3, lv_color_hex(0x9C9CD9), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_chat_panel_chat_panel3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -175,8 +175,8 @@ void ui_screen_chat_screen_init(void)
     lv_obj_set_height(ui_chat_image_chat_icon3, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_chat_image_chat_icon3, 0);
     lv_obj_set_y(ui_chat_image_chat_icon3, 80);
-    lv_obj_add_flag(ui_chat_image_chat_icon3, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_remove_flag(ui_chat_image_chat_icon3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_adv_hittest(ui_chat_image_chat_icon3, true);     /// Flags
+    lv_obj_set_scrollable(ui_chat_image_chat_icon3, false);      /// Flags
     lv_obj_set_style_image_recolor(ui_chat_image_chat_icon3, lv_color_hex(0x9C9CD9), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_image_recolor_opa(ui_chat_image_chat_icon3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 

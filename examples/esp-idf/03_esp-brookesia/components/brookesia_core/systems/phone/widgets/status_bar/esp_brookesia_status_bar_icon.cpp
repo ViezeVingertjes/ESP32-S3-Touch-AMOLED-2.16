@@ -55,16 +55,16 @@ bool StatusBarIcon::begin(base::Context &core, lv_obj_t *parent)
     /* Setup objects style */
     // Main
     lv_obj_add_style(main_obj.get(), core.getDisplay().getCoreContainerStyle(), 0);
-    lv_obj_clear_flag(main_obj.get(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollable(main_obj.get(), false);
     // Image
     for (auto &image_obj_tmp : image_objs) {
         lv_obj_add_style(image_obj_tmp.get(), core.getDisplay().getCoreContainerStyle(), 0);
         lv_obj_align(image_obj_tmp.get(), LV_ALIGN_CENTER, 0, 0);
         lv_obj_set_size(image_obj_tmp.get(), LV_SIZE_CONTENT, LV_SIZE_CONTENT);
         // lv_image_set_size_mode(image_obj_tmp.get(), LV_IMG_SIZE_MODE_REAL);
-        lv_obj_add_flag(image_obj_tmp.get(), LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_hidden(image_obj_tmp.get(), true);
     }
-    lv_obj_clear_flag(image_objs[0].get(), LV_OBJ_FLAG_HIDDEN);
+    lv_obj_set_hidden(image_objs[0].get(), false);
 
     // Save objects
     _main_obj = main_obj;
@@ -109,18 +109,18 @@ bool StatusBarIcon::setCurrentState(int state)
     }
 
     if (state < 0) {
-        lv_obj_add_flag(_main_obj.get(), LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_hidden(_main_obj.get(), true);
         goto end;
     } else if (_current_state < 0) {
-        lv_obj_clear_flag(_main_obj.get(), LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_hidden(_main_obj.get(), false);
     }
 
     for (int i = 0; i < image_resource_num; i++) {
         img_obj = _image_objs[i].get();
         if (i == state) {
-            lv_obj_clear_flag(img_obj, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_set_hidden(img_obj, false);
         } else {
-            lv_obj_add_flag(img_obj, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_set_hidden(img_obj, true);
         }
     }
 
@@ -146,11 +146,11 @@ bool StatusBarIcon::updateByNewData(void)
     lv_obj_set_size(main_obj.get(), _data.size.width, _data.size.height);
     if (_is_out_of_parent && _current_state >= 0) {
         _is_out_of_parent = false;
-        lv_obj_clear_flag(main_obj.get(), LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_hidden(main_obj.get(), false);
     }
     if (esp_brookesia_core_utils_check_obj_out_of_parent(main_obj.get())) {
         _is_out_of_parent = true;
-        lv_obj_add_flag(main_obj.get(), LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_hidden(main_obj.get(), true);
         ESP_UTILS_LOGW("Icon out of area, hide it");
     }
 

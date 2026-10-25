@@ -13,7 +13,7 @@
 void ui_screen_weather_screen_init(void)
 {
     ui_screen_weather = lv_obj_create(NULL);
-    lv_obj_remove_flag(ui_screen_weather, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(ui_screen_weather, false);      /// Flags
     lv_obj_set_style_bg_color(ui_screen_weather, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_screen_weather, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_screen_weather, &ui_img_pattern_png, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -42,8 +42,8 @@ void ui_screen_weather_screen_init(void)
     lv_obj_set_x(ui_weather_image_cloud, -2);
     lv_obj_set_y(ui_weather_image_cloud, 19);
     lv_obj_set_align(ui_weather_image_cloud, LV_ALIGN_TOP_MID);
-    lv_obj_add_flag(ui_weather_image_cloud, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_remove_flag(ui_weather_image_cloud, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_adv_hittest(ui_weather_image_cloud, true);     /// Flags
+    lv_obj_set_scrollable(ui_weather_image_cloud, false);      /// Flags
     lv_obj_set_style_image_recolor(ui_weather_image_cloud, lv_color_hex(0x293062), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_image_recolor_opa(ui_weather_image_cloud, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -64,7 +64,7 @@ void ui_screen_weather_screen_init(void)
     lv_obj_set_x(ui_weather_panel_weather_icons, 0);
     lv_obj_set_y(ui_weather_panel_weather_icons, -33);
     lv_obj_set_align(ui_weather_panel_weather_icons, LV_ALIGN_BOTTOM_MID);
-    lv_obj_remove_flag(ui_weather_panel_weather_icons, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(ui_weather_panel_weather_icons, false);      /// Flags
     lv_obj_set_style_bg_color(ui_weather_panel_weather_icons, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_weather_panel_weather_icons, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -74,8 +74,8 @@ void ui_screen_weather_screen_init(void)
     lv_obj_set_height(ui_weather_image_w1, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_weather_image_w1, 40);
     lv_obj_set_y(ui_weather_image_w1, 0);
-    lv_obj_add_flag(ui_weather_image_w1, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_remove_flag(ui_weather_image_w1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_adv_hittest(ui_weather_image_w1, true);     /// Flags
+    lv_obj_set_scrollable(ui_weather_image_w1, false);      /// Flags
     lv_obj_set_style_image_recolor(ui_weather_image_w1, lv_color_hex(0x293062), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_image_recolor_opa(ui_weather_image_w1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -84,8 +84,8 @@ void ui_screen_weather_screen_init(void)
     lv_obj_set_width(ui_weather_image_w2, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_weather_image_w2, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_weather_image_w2, LV_ALIGN_TOP_MID);
-    lv_obj_add_flag(ui_weather_image_w2, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_remove_flag(ui_weather_image_w2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_adv_hittest(ui_weather_image_w2, true);     /// Flags
+    lv_obj_set_scrollable(ui_weather_image_w2, false);      /// Flags
     lv_obj_set_style_image_recolor(ui_weather_image_w2, lv_color_hex(0x293062), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_image_recolor_opa(ui_weather_image_w2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -96,8 +96,8 @@ void ui_screen_weather_screen_init(void)
     lv_obj_set_x(ui_weather_image_w3, -40);
     lv_obj_set_y(ui_weather_image_w3, 0);
     lv_obj_set_align(ui_weather_image_w3, LV_ALIGN_TOP_RIGHT);
-    lv_obj_add_flag(ui_weather_image_w3, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_remove_flag(ui_weather_image_w3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_adv_hittest(ui_weather_image_w3, true);     /// Flags
+    lv_obj_set_scrollable(ui_weather_image_w3, false);      /// Flags
     lv_obj_set_style_image_recolor(ui_weather_image_w3, lv_color_hex(0x293062), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_image_recolor_opa(ui_weather_image_w3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
