@@ -8,9 +8,3 @@ idf_component_register(
     INCLUDE_DIRS ${PROJ_SRC}
     WHOLE_ARCHIVE
 )
-
-set_source_files_properties(
-    ${PROJ_SRCS_CPP}
-    PROPERTIES
-        COMPILE_FLAGS "-Wno-missing-field-initializers"
-)

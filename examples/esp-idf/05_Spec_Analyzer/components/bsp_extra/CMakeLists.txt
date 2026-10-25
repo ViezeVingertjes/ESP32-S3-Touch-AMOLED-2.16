@@ -18,15 +18,3 @@ idf_component_register(
     REQUIRES driver esp_driver_gpio esp_driver_i2c esp_driver_i2s esp_driver_ledc
     PRIV_REQUIRES esp_timer fatfs esp_psram esp_mm
 )
-
-target_compile_options(
-    ${COMPONENT_LIB} PRIVATE
-        -Wno-format
-        -Wno-int-conversion
-        -Wno-incompatible-pointer-types
-        -Wunused-function
-        -Wno-unused-variable
-        -Wno-unused-function
-        -Wno-overflow
-        -Wno-unused-but-set-variable
-        -Wno-discarded-qualifiers)

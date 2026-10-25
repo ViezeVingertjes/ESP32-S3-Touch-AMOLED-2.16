@@ -8,7 +8,6 @@ set(EXTRA_COMPONENT_DIRS
     ./components/bsp_extra
     )
 
-add_compile_options(-Wno-format)
 project(lvgl_demo_v9)
 
 # shortcut: esp-audio-player 2.0.0 leaves http_stream_set_eof() unused when
