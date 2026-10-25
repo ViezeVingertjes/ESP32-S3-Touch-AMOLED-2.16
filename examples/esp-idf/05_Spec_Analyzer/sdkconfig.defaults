@@ -56,3 +56,5 @@ CONFIG_LV_FONT_MONTSERRAT_44=y
 CONFIG_LV_FONT_FMT_TXT_LARGE=y
 CONFIG_LV_USE_FONT_COMPRESSED=y
 CONFIG_LV_USE_SNAPSHOT=y
+# Local file playback only; also avoids esp-audio-player 2.0.0 HTTP code that fails -Werror=switch on IDF 6.1
+CONFIG_AUDIO_PLAYER_ENABLE_HTTP_STREAM=n
