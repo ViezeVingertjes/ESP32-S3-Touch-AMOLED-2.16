@@ -4,7 +4,7 @@
 #include "lv_conf.h"
 #include <Arduino.h>
 #include <Wire.h>
-#include "SensorQMI8658.hpp"
+#include "ImuDrv.hpp"
 
 #define EXAMPLE_LVGL_TICK_PERIOD_MS 2
 
@@ -13,8 +13,9 @@ static lv_color_t buf[LCD_WIDTH * LCD_HEIGHT / 10];
 
 SensorQMI8658 qmi;
 
-IMUdata acc;
-IMUdata gyr;
+AccelerometerData acc;
+GyroscopeData gyr;
+constexpr float kStandardGravity = 9.80665f;  // SensorLib reports m/s^2; the chart plots g
 
 lv_obj_t *label;                  // Global label object
 lv_obj_t *chart;                  // Global chart object
@@ -145,8 +146,8 @@ if (!qmi.begin(Wire, QMI8658_L_SLAVE_ADDRESS, IIC_SDA, IIC_SCL)) {
     }
   }
 
-  qmi.configAccelerometer(SensorQMI8658::ACC_RANGE_4G, SensorQMI8658::ACC_ODR_1000Hz, SensorQMI8658::LPF_MODE_0);
-  qmi.enableAccelerometer();
+  qmi.configAccel(AccelFullScaleRange::FS_4G, 1000.0f, SensorQMI8658::LpfMode::MODE_0);
+  qmi.enableAccel();
 
   Serial.println("Read data now...");
 }
@@ -155,29 +156,32 @@ void loop() {
   lv_timer_handler(); /* let the GUI do its work */
   delay(5);
 
-  if (qmi.getDataReady()) {
-    if (qmi.getAccelerometer(acc.x, acc.y, acc.z)) {
+  if (qmi.isDataReady(static_cast<uint8_t>(ImuBase::DataReadyMask::ACCEL))) {
+    if (qmi.readAccel(acc)) {
+      const float ax = acc.mps2.x / kStandardGravity;
+      const float ay = acc.mps2.y / kStandardGravity;
+      const float az = acc.mps2.z / kStandardGravity;
       Serial.print("{ACCEL: ");
-      Serial.print(acc.x);
+      Serial.print(ax);
       Serial.print(",");
-      Serial.print(acc.y);
+      Serial.print(ay);
       Serial.print(",");
-      Serial.print(acc.z);
+      Serial.print(az);
       Serial.println("}");
 
       // Update chart with new accelerometer data
-      lv_chart_set_next_value(chart, acc_series_x, acc.x);
-      lv_chart_set_next_value(chart, acc_series_y, acc.y);
-      lv_chart_set_next_value(chart, acc_series_z, acc.z);
+      lv_chart_set_next_value(chart, acc_series_x, ax);
+      lv_chart_set_next_value(chart, acc_series_y, ay);
+      lv_chart_set_next_value(chart, acc_series_z, az);
     }
 
-    if (qmi.getGyroscope(gyr.x, gyr.y, gyr.z)) {
+    if (qmi.readGyro(gyr)) {
       Serial.print("{GYRO: ");
-      Serial.print(gyr.x);
+      Serial.print(gyr.dps.x);
       Serial.print(",");
-      Serial.print(gyr.y);
+      Serial.print(gyr.dps.y);
       Serial.print(",");
-      Serial.print(gyr.z);
+      Serial.print(gyr.dps.z);
       Serial.println("}");
     }
   }

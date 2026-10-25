@@ -1,15 +1,16 @@
 #include <lvgl.h>
 #include "Arduino_GFX_Library.h"
 #include "pin_config.h"
-#include "TouchDrvCSTXXX.hpp"
+#include "TouchDrvCST.hpp"
 #include "lv_conf.h"
 #include <demos/lv_demos.h>
 #include "HWCDC.h"
-#include <SensorQMI8658.hpp>
+#include <ImuDrv.hpp>
 #include <Wire.h>
 
 SensorQMI8658 qmi;
-IMUdata acc;
+AccelerometerData acc;
+constexpr float kStandardGravity = 9.80665f;  // SensorLib reports m/s^2; tilt thresholds are in g
 float angleX = 1;
 float angleY = 0;
 
@@ -32,7 +33,6 @@ Arduino_CO5300 *gfx = new Arduino_CO5300(
   bus, LCD_RESET /* RST */, 0 /* rotation */, LCD_WIDTH /* width */, LCD_HEIGHT /* height */, 0, 0, 0, 0);
 
 TouchDrvCST92xx touch;
-int16_t x[2], y[2];
 volatile bool touchPending = false;
 
 void IRAM_ATTR onTouchInterrupt() {
@@ -97,19 +97,20 @@ void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data) {
     return;
   }
 
-  uint8_t touched = touch.getPoint(x, y, touch.getSupportTouchPoint());
-  if (touched) {
+  const TouchPoints &points = touch.getTouchPoints();
+  if (points.hasPoints()) {
+    const TouchPoint &point = points.getPoint(0);
     data->state = LV_INDEV_STATE_PR;
 
     /*Set the coordinates*/
-    data->point.x = x[0];
-    data->point.y = y[0];
+    data->point.x = point.x;
+    data->point.y = point.y;
 
     USBSerial.print("Data x ");
-    USBSerial.print(x[0]);
+    USBSerial.print(point.x);
 
     USBSerial.print("Data y ");
-    USBSerial.println(y[0]);
+    USBSerial.println(point.y);
   } else {
     data->state = LV_INDEV_STATE_REL;
   }
@@ -137,7 +138,7 @@ void setup() {
   pinMode(TP_INT, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(TP_INT), onTouchInterrupt, FALLING);
 
-  // This bundled SensorLib names the schematic-strapped 0x6B address as "L".
+  // SensorLib names the schematic-strapped 0x6B address as "L".
   if (!qmi.begin(Wire, QMI8658_L_SLAVE_ADDRESS, IIC_SDA, IIC_SCL)) {
     Serial.println("Failed to find QMI8658 - check your wiring!");
     while (1) {
@@ -146,8 +147,8 @@ void setup() {
   }
 
   // 设置加速度计
-  qmi.configAccelerometer(SensorQMI8658::ACC_RANGE_4G, SensorQMI8658::ACC_ODR_1000Hz, SensorQMI8658::LPF_MODE_0);
-  qmi.enableAccelerometer();
+  qmi.configAccel(AccelFullScaleRange::FS_4G, 1000.0f, SensorQMI8658::LpfMode::MODE_0);
+  qmi.enableAccel();
 
   gfx->begin();
   gfx->setBrightness(200);
@@ -220,10 +221,10 @@ void setup() {
 }
 
 void loop() {
-  if (qmi.getDataReady()) {
-    if (qmi.getAccelerometer(acc.x, acc.y, acc.z)) {
-      angleX = acc.x;
-      angleY = acc.y;
+  if (qmi.isDataReady(static_cast<uint8_t>(ImuBase::DataReadyMask::ACCEL))) {
+    if (qmi.readAccel(acc)) {
+      angleX = acc.mps2.x / kStandardGravity;
+      angleY = acc.mps2.y / kStandardGravity;
       if (angleX > 0.8 && !rotation) {
         lv_disp_set_rotation(NULL, LV_DISP_ROT_270);
         rotation = true;

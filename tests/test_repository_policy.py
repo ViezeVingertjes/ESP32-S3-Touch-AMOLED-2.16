@@ -78,9 +78,9 @@ class SdkconfigPolicyTests(unittest.TestCase):
         )
 
     def test_lvgl_qmi8658_selection_matches_the_schematic_address(self) -> None:
-        header = (ROOT / "examples/arduino/libraries/SensorLib/src/REG/QMI8658Constants.h").read_text(encoding="utf-8")
+        header = (ROOT / "examples/arduino/libraries/SensorLib/src/sensor/imu/qmi8658/SensorQMI8658.hpp").read_text(encoding="utf-8")
         sketch = (ROOT / "examples/arduino/05_LVGL_Widgets/05_LVGL_Widgets.ino").read_text(encoding="utf-8")
-        match = re.search(r"^#define\s+QMI8658_L_SLAVE_ADDRESS\s+\(?(0x[0-9A-Fa-f]+)\)?", header, re.MULTILINE)
+        match = re.search(r"^static constexpr uint8_t\s+QMI8658_L_SLAVE_ADDRESS\s*=\s*\(?(0x[0-9A-Fa-f]+)\)?;", header, re.MULTILINE)
         self.assertIsNotNone(match)
         self.assertEqual(match.group(1), "0x6B")
         self.assertIn("qmi.begin(Wire, QMI8658_L_SLAVE_ADDRESS, IIC_SDA, IIC_SCL)", sketch)
