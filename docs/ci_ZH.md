@@ -7,8 +7,10 @@ stdlib 合成测试，并发布所选矩阵。差异为空或 base 不可用时�
 
 ESP-IDF 发现 `examples/esp-idf/` 下的 5 个直接项目，使用 `v5.5.6` 和 `v6.1`。
 Arduino 发现 `examples/arduino/` 下的 7 个直接草图，使用核心 `3.3.12`；
-`examples/arduino/libraries/**` 不属于产品草图。`workflow_dispatch` 接受 `all`、
-项目/草图名称或仓库相对示例路径。
+`examples/arduino/libraries/**` 不属于产品草图。草图使用 `--warnings all`，并按板载
+16 MB Flash、3 MB 应用分区和 OPI PSRAM 编译
+（`esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi`）。
+`workflow_dispatch` 接受 `all`、项目/草图名称或仓库相对示例路径。
 
 根目录、示例内、草图旁和随附库中的 Markdown 仅运行轻量门禁。直接示例代码只选择
 对应示例；共享/全局输入选择适用的完整矩阵。`firmware/` 的变更会报告但不进入示例矩阵。
