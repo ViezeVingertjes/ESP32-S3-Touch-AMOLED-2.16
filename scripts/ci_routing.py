@@ -20,7 +20,7 @@ from discover_examples import discover_arduino, discover_esp_idf
 
 IDF_VERSIONS = ("v5.5.5", "v6.0.2")
 ARDUINO_CORE = "3.3.12"
-FQBN = "esp32:esp32:esp32s3"
+FQBN = "esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi"
 CONFIG_KEYS = {
     "build_override_patterns",
     "documentation_patterns",
