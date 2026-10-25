@@ -8,7 +8,7 @@ publishes the selected matrices. It fails rather than guessing when the diff is
 empty or its base is unavailable.
 
 ESP-IDF discovery covers the five direct projects in `examples/esp-idf/` with
-`v5.5.5` and `v6.0.2`. Arduino discovery covers the seven direct sketches in
+`v5.5.6` and `v6.1`. Arduino discovery covers the seven direct sketches in
 `examples/arduino/` with core `3.3.12`; `examples/arduino/libraries/**` is not a
 product sketch. `workflow_dispatch` accepts `all`, a project/sketch name, or a
 repository-relative example path.

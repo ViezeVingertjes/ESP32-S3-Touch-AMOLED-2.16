@@ -73,7 +73,7 @@ def main() -> None:
     parser.add_argument("--repo", default=".")
     parser.add_argument("--surface", choices=("esp-idf", "arduino"), required=True)
     parser.add_argument("--selector", default="all")
-    parser.add_argument("--idf-versions", default="v5.5.5,v6.0.2")
+    parser.add_argument("--idf-versions", default="v5.5.6,v6.1")
     parser.add_argument("--arduino-core", default="3.3.12")
     parser.add_argument("--fqbn", default="esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi")
     parser.add_argument("--github-output")
