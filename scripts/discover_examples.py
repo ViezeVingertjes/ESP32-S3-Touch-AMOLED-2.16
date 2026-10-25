@@ -74,7 +74,7 @@ def main() -> None:
     parser.add_argument("--surface", choices=("esp-idf", "arduino"), required=True)
     parser.add_argument("--selector", default="all")
     parser.add_argument("--idf-versions", default="v5.5.5,v6.0.2")
-    parser.add_argument("--arduino-core", default="3.3.11")
+    parser.add_argument("--arduino-core", default="3.3.12")
     parser.add_argument("--fqbn", default="esp32:esp32:esp32s3")
     parser.add_argument("--github-output")
     parser.add_argument("--output-prefix", default="")

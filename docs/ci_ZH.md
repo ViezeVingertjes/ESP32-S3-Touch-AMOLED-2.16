@@ -6,7 +6,7 @@
 stdlib 合成测试，并发布所选矩阵。差异为空或 base 不可用时会失败，而不会猜测。
 
 ESP-IDF 发现 `examples/esp-idf/` 下的 5 个直接项目，使用 `v5.5.5` 和 `v6.0.2`。
-Arduino 发现 `examples/arduino/` 下的 7 个直接草图，使用核心 `3.3.11`；
+Arduino 发现 `examples/arduino/` 下的 7 个直接草图，使用核心 `3.3.12`；
 `examples/arduino/libraries/**` 不属于产品草图。`workflow_dispatch` 接受 `all`、
 项目/草图名称或仓库相对示例路径。
 
