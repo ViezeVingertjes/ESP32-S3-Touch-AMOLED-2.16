@@ -11,6 +11,7 @@
 #endif
 #include "private/esp_brookesia_lv_utils.hpp"
 #include "esp_brookesia_lv_object.hpp"
+#include "esp_brookesia_lv_flags.h"
 
 namespace esp_brookesia::gui {
 
@@ -259,11 +260,7 @@ bool LvObject::setStyleAttribute(StyleFlag flags, bool enable)
 
     lv_obj_flag_t lv_flag = toLvFlags(flags);
     if (lv_flag) {
-        if (enable) {
-            lv_obj_add_flag(_native_handle, lv_flag);
-        } else {
-            lv_obj_remove_flag(_native_handle, lv_flag);
-        }
+        esp_brookesia_lv_obj_set_flags(_native_handle, lv_flag, enable);
     }
 
     if (flags | STYLE_FLAG_CLIP_CORNER) {
@@ -271,9 +268,9 @@ bool LvObject::setStyleAttribute(StyleFlag flags, bool enable)
             _native_handle, enable, static_cast<int>(LV_PART_MAIN) | static_cast<int>(LV_STATE_DEFAULT)
         );
         if (enable) {
-            lv_obj_remove_flag(_native_handle, LV_OBJ_FLAG_OVERFLOW_VISIBLE);
+            lv_obj_set_overflow_visible(_native_handle, false);
         } else {
-            lv_obj_add_flag(_native_handle, LV_OBJ_FLAG_OVERFLOW_VISIBLE);
+            lv_obj_set_overflow_visible(_native_handle, true);
         }
     }
 
@@ -406,7 +403,7 @@ bool LvObject::hasFlags(StyleFlag flags) const
     bool result = true;
     lv_obj_flag_t lv_flag = toLvFlags(flags);
     if (lv_flag) {
-        result = lv_obj_has_flag(_native_handle, lv_flag);
+        result = esp_brookesia_lv_obj_has_flags(_native_handle, lv_flag);
     }
 
     if (flags | STYLE_FLAG_CLIP_CORNER) {

@@ -23,7 +23,7 @@ lv_obj_t *ui_panel_alarm_comp_create(lv_obj_t *comp_parent)
     lv_obj_set_x(cui_panel_alarm_comp, 0);
     lv_obj_set_y(cui_panel_alarm_comp, 43);
     lv_obj_set_align(cui_panel_alarm_comp, LV_ALIGN_TOP_MID);
-    lv_obj_remove_flag(cui_panel_alarm_comp, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(cui_panel_alarm_comp, false);      /// Flags
     lv_obj_set_style_bg_color(cui_panel_alarm_comp, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(cui_panel_alarm_comp, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_color(cui_panel_alarm_comp, lv_color_hex(0x293062), LV_PART_MAIN | LV_STATE_DEFAULT);

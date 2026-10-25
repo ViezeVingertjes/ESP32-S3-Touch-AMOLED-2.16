@@ -7,15 +7,8 @@
 
 #include <memory>
 #include <cstdlib>
-#include <src/core/lv_obj.h>
 #include "lvgl.h"
-#if __has_include("lvgl_private.h")
-#   include "lvgl_private.h"
-#   include "lv_api_map_v8.h"
-#else
-#   include "src/lvgl_private.h"
-#   include "src/lv_api_map_v8.h"
-#endif
+#include "lvgl_private.h"
 #include "style/esp_brookesia_gui_style.hpp"
 
 namespace esp_brookesia::gui {
@@ -136,10 +129,6 @@ inline lv_anim_path_cb_t esp_brookesia_core_utils_get_anim_path_cb(esp_brookesia
 inline lv_obj_flag_t operator|(lv_obj_flag_t a, lv_obj_flag_t b)
 {
     return static_cast<lv_obj_flag_t>(static_cast<int>(a) | static_cast<int>(b));
-}
-inline void lv_obj_remove_flag(lv_obj_t *obj, int flag)
-{
-    lv_obj_remove_flag(obj, static_cast<lv_obj_flag_t>(flag));
 }
 
 /**

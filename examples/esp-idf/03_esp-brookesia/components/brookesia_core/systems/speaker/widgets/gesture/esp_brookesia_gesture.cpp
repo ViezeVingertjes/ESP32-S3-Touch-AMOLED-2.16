@@ -105,14 +105,16 @@ bool Gesture::begin(lv_obj_t *parent)
     /* Setup objects */
     // Event mask
     lv_obj_add_style(event_mask_obj.get(), core.getDisplay().getCoreContainerStyle(), 0);
-    lv_obj_add_flag(event_mask_obj.get(), LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_HIDDEN);
+    lv_obj_set_clickable(event_mask_obj.get(), true);
+    lv_obj_set_hidden(event_mask_obj.get(), true);
     lv_obj_center(event_mask_obj.get());
     // Indicator bar
     for (int i = 0; i < GESTURE_INDICATOR_BAR_TYPE_MAX; i++) {
         // Bar
         lv_obj_add_style(indicator_bars[i].get(), core.getDisplay().getCoreContainerStyle(), 0);
-        lv_obj_clear_flag(indicator_bars[i].get(), LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-        lv_obj_add_flag(indicator_bars[i].get(), LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_clickable(indicator_bars[i].get(), false);
+        lv_obj_set_scrollable(indicator_bars[i].get(), false);
+        lv_obj_set_hidden(indicator_bars[i].get(), true);
         lv_bar_set_range(indicator_bars[i].get(), 0, 100);
         lv_bar_set_start_value(indicator_bars[i].get(), 0, LV_ANIM_OFF);
         lv_bar_set_value(indicator_bars[i].get(), 100, LV_ANIM_OFF);
@@ -187,7 +189,7 @@ bool Gesture::checkMaskVisible(void) const
 {
     ESP_UTILS_CHECK_FALSE_RETURN(checkInitialized(), false, "Not initialized");
 
-    return !lv_obj_has_flag(_event_mask_obj.get(), LV_OBJ_FLAG_HIDDEN);
+    return !lv_obj_is_hidden(_event_mask_obj.get());
 }
 
 bool Gesture::checkIndicatorBarVisible(GestureIndicatorBarType type) const
@@ -195,7 +197,7 @@ bool Gesture::checkIndicatorBarVisible(GestureIndicatorBarType type) const
     ESP_UTILS_CHECK_FALSE_RETURN(checkInitialized(), false, "Not initialized");
     ESP_UTILS_CHECK_FALSE_RETURN(type < GESTURE_INDICATOR_BAR_TYPE_MAX, false, "Invalid indicator bar type");
 
-    return !lv_obj_has_flag(_indicator_bars[type].get(), LV_OBJ_FLAG_HIDDEN);
+    return !lv_obj_is_hidden(_indicator_bars[type].get());
 }
 
 int Gesture::getIndicatorBarLength(GestureIndicatorBarType type) const
@@ -277,9 +279,9 @@ bool Gesture::setMaskObjectVisible(bool visible) const
     if (visible) {
         lv_indev_reset(_touch_device, NULL);
         lv_obj_move_foreground(_event_mask_obj.get());
-        lv_obj_clear_flag(_event_mask_obj.get(), LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_hidden(_event_mask_obj.get(), false);
     } else {
-        lv_obj_add_flag(_event_mask_obj.get(), LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_hidden(_event_mask_obj.get(), true);
     }
 
     return true;
@@ -360,9 +362,9 @@ bool Gesture::setIndicatorBarVisible(GestureIndicatorBarType type, bool visible)
 
     if (visible) {
         lv_obj_move_foreground(_indicator_bars[type].get());
-        lv_obj_clear_flag(_indicator_bars[type].get(), LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_hidden(_indicator_bars[type].get(), false);
     } else {
-        lv_obj_add_flag(_indicator_bars[type].get(), LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_hidden(_indicator_bars[type].get(), true);
         ESP_UTILS_CHECK_FALSE_RETURN(setIndicatorBarLength(type, _indicator_bar_max_lengths[type]), false,
                                      "Set indicator bar length failed");
     }

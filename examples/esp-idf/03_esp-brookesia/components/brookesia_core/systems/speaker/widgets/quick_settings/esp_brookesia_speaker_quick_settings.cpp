@@ -261,7 +261,7 @@ bool QuickSettings::setWifiIconState(WifiState state)
     const lv_image_dsc_t *image_src = nullptr;
     switch (state) {
     case WifiState::CLOSED:
-        lv_obj_add_flag(wifi_icon, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_hidden(wifi_icon, true);
         break;
     case WifiState::DISCONNECTED:
         image_src = &speaker_image_middle_quick_settings_wifi_close_20_20;
@@ -281,7 +281,7 @@ bool QuickSettings::setWifiIconState(WifiState state)
 
     if (image_src != nullptr) {
         lv_image_set_src(wifi_icon, image_src);
-        lv_obj_remove_flag(wifi_icon, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_hidden(wifi_icon, false);
     }
 
     ESP_UTILS_LOG_TRACE_EXIT_WITH_THIS();

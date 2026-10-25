@@ -23,7 +23,7 @@ lv_obj_t *ui_panel_clock_dot_create(lv_obj_t *comp_parent)
     lv_obj_set_x(cui_panel_clock_dot, -10);
     lv_obj_set_y(cui_panel_clock_dot, 50);
     lv_obj_set_align(cui_panel_clock_dot, LV_ALIGN_TOP_RIGHT);
-    lv_obj_remove_flag(cui_panel_clock_dot, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(cui_panel_clock_dot, false);      /// Flags
     lv_obj_set_style_radius(cui_panel_clock_dot, 50, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(cui_panel_clock_dot, lv_color_hex(0xB3B4E5), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(cui_panel_clock_dot, 255, LV_PART_MAIN | LV_STATE_DEFAULT);

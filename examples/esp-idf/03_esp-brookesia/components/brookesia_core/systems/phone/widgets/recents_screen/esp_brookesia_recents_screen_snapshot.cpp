@@ -70,17 +70,17 @@ bool RecentsScreenSnapshot::begin(lv_obj_t *parent)
     /* Setup objects style */
     // Main
     lv_obj_add_style(main_obj.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
-    lv_obj_clear_flag(main_obj.get(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollable(main_obj.get(), false);
     // Drag
     lv_obj_add_style(drag_obj.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
     lv_obj_center(drag_obj.get());
-    lv_obj_clear_flag(drag_obj.get(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollable(drag_obj.get(), false);
     // Title
     lv_obj_add_style(title_obj.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
     lv_obj_align(title_obj.get(), LV_ALIGN_TOP_MID, 0, 0);
     lv_obj_set_flex_flow(title_obj.get(), LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(title_obj.get(), LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    lv_obj_clear_flag(title_obj.get(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollable(title_obj.get(), false);
     // Title icon
     lv_obj_add_style(title_icon.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
     // lv_obj_set_size(title_icon.get(), LV_SIZE_CONTENT, LV_SIZE_CONTENT);
@@ -92,13 +92,13 @@ bool RecentsScreenSnapshot::begin(lv_obj_t *parent)
     // Snapshot
     lv_obj_add_style(snapshot_obj.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
     lv_obj_align(snapshot_obj.get(), LV_ALIGN_BOTTOM_MID, 0, 0);
-    lv_obj_clear_flag(snapshot_obj.get(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollable(snapshot_obj.get(), false);
     lv_obj_set_style_clip_corner(snapshot_obj.get(), true, 0);
     // Snapshot image
     lv_obj_add_style(snapshot_image.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
     lv_obj_center(snapshot_image.get());
     lv_image_set_inner_align(snapshot_image.get(), LV_IMAGE_ALIGN_CENTER);
-    lv_obj_clear_flag(snapshot_image.get(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollable(snapshot_image.get(), false);
 
     /* Save objects */
     _main_obj = main_obj;

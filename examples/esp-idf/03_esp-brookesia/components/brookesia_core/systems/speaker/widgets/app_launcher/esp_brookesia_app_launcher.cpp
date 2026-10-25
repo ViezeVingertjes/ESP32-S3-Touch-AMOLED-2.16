@@ -5,9 +5,8 @@
  */
 #include <limits>
 #include <memory>
-#include <src/core/lv_obj_pos.h>
+#include "lvgl.h"
 #if __has_include("src/misc/lv_area.h")
-#include "src/misc/lv_area.h"
 #else
 #include "misc/lv_area.h"
 #endif
@@ -87,7 +86,7 @@ bool AppLauncher::begin(lv_obj_t *parent)
     lv_obj_set_flex_align(table_obj.get(), LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_scrollbar_mode(table_obj.get(), LV_SCROLLBAR_MODE_OFF);
     lv_obj_set_scroll_snap_x(table_obj.get(), LV_SCROLL_SNAP_CENTER);
-    lv_obj_clear_flag(table_obj.get(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollable(table_obj.get(), false);
     lv_obj_add_event_cb(table_obj.get(), onPageTouchEventCallback, LV_EVENT_RELEASED, this);
     // Indicator
     lv_obj_add_style(indicator_obj.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
@@ -243,10 +242,10 @@ bool AppLauncher::scrollToPage(uint8_t index)
         return true;
     }
 
-    lv_obj_add_flag(_table_obj.get(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollable(_table_obj.get(), true);
     lv_obj_scroll_to_view_recursive(_mix_objs[index].page_obj.get(), _data.flags.enable_table_scroll_anim ?
                                     LV_ANIM_ON : LV_ANIM_OFF);
-    lv_obj_clear_flag(_table_obj.get(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollable(_table_obj.get(), false);
 
     _table_current_page_index = index;
 
@@ -395,14 +394,14 @@ bool AppLauncher::createMixObject(ESP_Brookesia_LvObj_t &table_obj, ESP_Brookesi
     ESP_UTILS_CHECK_NULL_RETURN(spot_obj, false, "Create spot_obj failed");
 
     lv_obj_add_style(page_main_obj.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
-    lv_obj_add_flag(page_main_obj.get(), LV_OBJ_FLAG_EVENT_BUBBLE);
+    lv_obj_set_event_bubble(page_main_obj.get(), true);
 
     lv_obj_center(page_obj.get());
     lv_obj_add_style(page_obj.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
     lv_obj_set_flex_flow(page_obj.get(), LV_FLEX_FLOW_ROW_WRAP);
     lv_obj_set_flex_align(page_obj.get(), LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
-    lv_obj_clear_flag(page_obj.get(), LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_add_flag(page_obj.get(), LV_OBJ_FLAG_EVENT_BUBBLE);
+    lv_obj_set_scrollable(page_obj.get(), false);
+    lv_obj_set_event_bubble(page_obj.get(), true);
 
     lv_obj_add_style(spot_obj.get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
     lv_obj_set_style_radius(spot_obj.get(), LV_RADIUS_CIRCLE, 0);

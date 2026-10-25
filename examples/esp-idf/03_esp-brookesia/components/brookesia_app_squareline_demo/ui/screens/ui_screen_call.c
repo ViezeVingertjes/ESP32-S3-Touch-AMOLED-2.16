@@ -13,7 +13,7 @@
 void ui_screen_call_screen_init(void)
 {
     ui_screen_call = lv_obj_create(NULL);
-    lv_obj_remove_flag(ui_screen_call, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(ui_screen_call, false);      /// Flags
     lv_obj_set_style_bg_color(ui_screen_call, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_screen_call, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_screen_call, &ui_img_pattern_png, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -41,7 +41,7 @@ void ui_screen_call_screen_init(void)
     lv_obj_set_x(ui_call_panel_call_incon1, -50);
     lv_obj_set_y(ui_call_panel_call_incon1, -42);
     lv_obj_set_align(ui_call_panel_call_incon1, LV_ALIGN_BOTTOM_MID);
-    lv_obj_remove_flag(ui_call_panel_call_incon1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(ui_call_panel_call_incon1, false);      /// Flags
     lv_obj_set_style_radius(ui_call_panel_call_incon1, 60, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_call_panel_call_incon1, lv_color_hex(0xE63431), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_call_panel_call_incon1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -59,8 +59,8 @@ void ui_screen_call_screen_init(void)
     lv_obj_set_width(ui_call_image_phone1, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_call_image_phone1, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_call_image_phone1, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_call_image_phone1, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_remove_flag(ui_call_image_phone1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_adv_hittest(ui_call_image_phone1, true);     /// Flags
+    lv_obj_set_scrollable(ui_call_image_phone1, false);      /// Flags
     lv_image_set_rotation(ui_call_image_phone1, 1360);
 
     ui_call_panel_call_incon2 = lv_obj_create(ui_screen_call);
@@ -69,7 +69,7 @@ void ui_screen_call_screen_init(void)
     lv_obj_set_x(ui_call_panel_call_incon2, 50);
     lv_obj_set_y(ui_call_panel_call_incon2, -42);
     lv_obj_set_align(ui_call_panel_call_incon2, LV_ALIGN_BOTTOM_MID);
-    lv_obj_remove_flag(ui_call_panel_call_incon2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(ui_call_panel_call_incon2, false);      /// Flags
     lv_obj_set_style_radius(ui_call_panel_call_incon2, 60, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_call_panel_call_incon2, lv_color_hex(0x10D262), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_call_panel_call_incon2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -87,8 +87,8 @@ void ui_screen_call_screen_init(void)
     lv_obj_set_width(ui_call_image_phone2, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_call_image_phone2, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_call_image_phone2, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_call_image_phone2, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_remove_flag(ui_call_image_phone2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_adv_hittest(ui_call_image_phone2, true);     /// Flags
+    lv_obj_set_scrollable(ui_call_image_phone2, false);      /// Flags
 
     ui_call_image_avatar = lv_image_create(ui_screen_call);
     lv_image_set_src(ui_call_image_avatar, &ui_img_avatar_png);
@@ -97,8 +97,8 @@ void ui_screen_call_screen_init(void)
     lv_obj_set_x(ui_call_image_avatar, 0);
     lv_obj_set_y(ui_call_image_avatar, 20);
     lv_obj_set_align(ui_call_image_avatar, LV_ALIGN_TOP_MID);
-    lv_obj_add_flag(ui_call_image_avatar, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_remove_flag(ui_call_image_avatar, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_adv_hittest(ui_call_image_avatar, true);     /// Flags
+    lv_obj_set_scrollable(ui_call_image_avatar, false);      /// Flags
     lv_obj_set_style_radius(ui_call_image_avatar, 300, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_shadow_color(ui_call_image_avatar, lv_color_hex(0xD5D2D5), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_shadow_opa(ui_call_image_avatar, 255, LV_PART_MAIN | LV_STATE_DEFAULT);

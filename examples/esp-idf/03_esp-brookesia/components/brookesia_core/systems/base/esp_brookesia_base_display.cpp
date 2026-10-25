@@ -7,8 +7,7 @@
 #include "lvgl/esp_brookesia_lv_container.hpp"
 #include "lvgl/esp_brookesia_lv_helper.hpp"
 #include "lvgl/esp_brookesia_lv_screen.hpp"
-#include <src/core/lv_obj_style_gen.h>
-#include <src/display/lv_display.h>
+#include "lvgl.h"
 #if !ESP_BROOKESIA_BASE_DISPLAY_ENABLE_DEBUG_LOG
 #   define ESP_BROOKESIA_UTILS_DISABLE_DEBUG_LOG
 #endif
@@ -169,11 +168,13 @@ bool Display::begin(void)
     }
     // Main screen
     lv_obj_align(_main_screen_obj->getNativeHandle(), LV_ALIGN_TOP_LEFT, 0, 0);
-    lv_obj_clear_flag(_main_screen_obj->getNativeHandle(), LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_clickable(_main_screen_obj->getNativeHandle(), false);
+    lv_obj_set_scrollable(_main_screen_obj->getNativeHandle(), false);
     lv_obj_add_style(_main_screen_obj->getNativeHandle(), getCoreContainerStyle(), 0);
     // System screen
     lv_obj_align(_system_screen_obj->getNativeHandle(), LV_ALIGN_TOP_LEFT, 0, 0);
-    lv_obj_clear_flag(_system_screen_obj->getNativeHandle(), LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_clickable(_system_screen_obj->getNativeHandle(), false);
+    lv_obj_set_scrollable(_system_screen_obj->getNativeHandle(), false);
     lv_obj_add_style(_system_screen_obj->getNativeHandle(), getCoreContainerStyle(), 0);
 
     // Update object style

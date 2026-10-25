@@ -13,7 +13,7 @@
 void ui_screen_alarm_screen_init(void)
 {
     ui_screen_alarm = lv_obj_create(NULL);
-    lv_obj_remove_flag(ui_screen_alarm, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(ui_screen_alarm, false);      /// Flags
     lv_obj_set_style_bg_color(ui_screen_alarm, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_screen_alarm, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_screen_alarm, &ui_img_pattern_png, LV_PART_MAIN | LV_STATE_DEFAULT);

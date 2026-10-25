@@ -13,7 +13,7 @@
 void ui_screen_clock_screen_init(void)
 {
     ui_screen_clock = lv_obj_create(NULL);
-    lv_obj_remove_flag(ui_screen_clock, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(ui_screen_clock, false);      /// Flags
     lv_obj_set_style_bg_image_src(ui_screen_clock, &ui_img_pattern_png, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_tiled(ui_screen_clock, true, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -23,7 +23,7 @@ void ui_screen_clock_screen_init(void)
     lv_obj_set_x(ui_clock_panel_clock_panel, 0);
     lv_obj_set_y(ui_clock_panel_clock_panel, 40);
     lv_obj_set_align(ui_clock_panel_clock_panel, LV_ALIGN_CENTER);
-    lv_obj_remove_flag(ui_clock_panel_clock_panel, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(ui_clock_panel_clock_panel, false);      /// Flags
     lv_obj_set_style_radius(ui_clock_panel_clock_panel, 500, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_clock_panel_clock_panel, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_clock_panel_clock_panel, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -94,31 +94,31 @@ void ui_screen_clock_screen_init(void)
     lv_obj_set_width(ui_clock_image_min, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_clock_image_min, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_clock_image_min, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_clock_image_min, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_remove_flag(ui_clock_image_min, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_adv_hittest(ui_clock_image_min, true);     /// Flags
+    lv_obj_set_scrollable(ui_clock_image_min, false);      /// Flags
 
     ui_clock_image_hour = lv_image_create(ui_clock_panel_clock_panel);
     lv_image_set_src(ui_clock_image_hour, &ui_img_clock_hour_png);
     lv_obj_set_width(ui_clock_image_hour, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_clock_image_hour, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_clock_image_hour, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_clock_image_hour, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_remove_flag(ui_clock_image_hour, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_adv_hittest(ui_clock_image_hour, true);     /// Flags
+    lv_obj_set_scrollable(ui_clock_image_hour, false);      /// Flags
 
     ui_clock_image_sec = lv_image_create(ui_clock_panel_clock_panel);
     lv_image_set_src(ui_clock_image_sec, &ui_img_clock_sec_png);
     lv_obj_set_width(ui_clock_image_sec, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_clock_image_sec, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_clock_image_sec, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_clock_image_sec, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_remove_flag(ui_clock_image_sec, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_adv_hittest(ui_clock_image_sec, true);     /// Flags
+    lv_obj_set_scrollable(ui_clock_image_sec, false);      /// Flags
     lv_image_set_rotation(ui_clock_image_sec, 150);
 
     ui_clock_panel_clock_center = lv_obj_create(ui_clock_panel_clock_panel);
     lv_obj_set_width(ui_clock_panel_clock_center, 8);
     lv_obj_set_height(ui_clock_panel_clock_center, 8);
     lv_obj_set_align(ui_clock_panel_clock_center, LV_ALIGN_CENTER);
-    lv_obj_remove_flag(ui_clock_panel_clock_center, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(ui_clock_panel_clock_center, false);      /// Flags
     lv_obj_set_style_radius(ui_clock_panel_clock_center, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_clock_panel_clock_center, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_clock_panel_clock_center, 255, LV_PART_MAIN | LV_STATE_DEFAULT);

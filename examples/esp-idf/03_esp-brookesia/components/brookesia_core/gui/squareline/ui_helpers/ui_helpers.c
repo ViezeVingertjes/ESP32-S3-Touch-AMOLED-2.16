@@ -9,6 +9,7 @@
 // Project name: Smart_Gadget
 
 #include "ui_helpers.h"
+#include "gui/lvgl/esp_brookesia_lv_flags.h"
 
 #if ESP_BROOKESIA_SQUARELINE_ENABLE_UI_HELPERS
 
@@ -124,15 +125,9 @@ void _ui_keyboard_set_target(lv_obj_t *keyboard, lv_obj_t *textarea)
 void _ui_flag_modify(lv_obj_t *target, int32_t flag, int value)
 {
     if (value == _UI_MODIFY_FLAG_TOGGLE) {
-        if (lv_obj_has_flag(target, flag)) {
-            lv_obj_remove_flag(target, flag);
-        } else {
-            lv_obj_add_flag(target, flag);
-        }
-    } else if (value == _UI_MODIFY_FLAG_ADD) {
-        lv_obj_add_flag(target, flag);
+        esp_brookesia_lv_obj_set_flags(target, flag, !esp_brookesia_lv_obj_has_flags(target, flag));
     } else {
-        lv_obj_remove_flag(target, flag);
+        esp_brookesia_lv_obj_set_flags(target, flag, value == _UI_MODIFY_FLAG_ADD);
     }
 }
 void _ui_state_modify(lv_obj_t *target, int32_t state, int value)

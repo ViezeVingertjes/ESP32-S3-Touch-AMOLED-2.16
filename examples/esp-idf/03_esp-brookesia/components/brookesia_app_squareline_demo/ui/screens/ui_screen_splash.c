@@ -13,7 +13,7 @@
 void ui_screen_splash_screen_init(void)
 {
     ui_screen_splash = lv_obj_create(NULL);
-    lv_obj_remove_flag(ui_screen_splash, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_scrollable(ui_screen_splash, false);      /// Flags
     lv_obj_set_style_bg_color(ui_screen_splash, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_screen_splash, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -41,8 +41,8 @@ void ui_screen_splash_screen_init(void)
     lv_obj_set_x(ui_splash_image_sls_logo, 0);
     lv_obj_set_y(ui_splash_image_sls_logo, -50);
     lv_obj_set_align(ui_splash_image_sls_logo, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_splash_image_sls_logo, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_remove_flag(ui_splash_image_sls_logo, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_adv_hittest(ui_splash_image_sls_logo, true);     /// Flags
+    lv_obj_set_scrollable(ui_splash_image_sls_logo, false);      /// Flags
 
     lv_obj_add_event_cb(ui_screen_splash, ui_event_screen_splash, LV_EVENT_ALL, NULL);
 

@@ -5,7 +5,7 @@
  */
 #include "esp_brookesia_gui_internal.h"
 #include "esp_brookesia_lv_helper.hpp"
-#include "src/misc/lv_anim.h"
+#include "lvgl.h"
 #if !ESP_BROOKESIA_LVGL_ANIMATION_ENABLE_DEBUG_LOG
 #   define ESP_BROOKESIA_UTILS_DISABLE_DEBUG_LOG
 #endif

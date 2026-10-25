@@ -91,13 +91,14 @@ bool NavigationBar::begin(lv_obj_t *parent)
     lv_obj_align(main_obj.get(), LV_ALIGN_BOTTOM_MID, 0, 0);
     lv_obj_set_flex_flow(main_obj.get(), LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(main_obj.get(), LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    lv_obj_clear_flag(main_obj.get(), LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollable(main_obj.get(), false);
     // Button
     for (int i = 0; i < BUTTON_NUM; i++) {
         lv_obj_add_style(button_objs[i].get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
         lv_obj_set_style_bg_opa(button_objs[i].get(), LV_OPA_TRANSP, 0);
-        lv_obj_add_flag(button_objs[i].get(), LV_OBJ_FLAG_CLICKABLE);
-        lv_obj_clear_flag(button_objs[i].get(), LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_PRESS_LOCK);
+        lv_obj_set_clickable(button_objs[i].get(), true);
+        lv_obj_set_scrollable(button_objs[i].get(), false);
+        lv_obj_set_press_lock(button_objs[i].get(), false);
         lv_obj_add_event_cb(button_objs[i].get(), onIconTouchEventCallback, LV_EVENT_PRESSED, this);
         lv_obj_add_event_cb(button_objs[i].get(), onIconTouchEventCallback, LV_EVENT_PRESSING, this);
         lv_obj_add_event_cb(button_objs[i].get(), onIconTouchEventCallback, LV_EVENT_PRESS_LOST, this);
@@ -106,13 +107,14 @@ bool NavigationBar::begin(lv_obj_t *parent)
         // Icon object
         lv_obj_add_style(icon_main_objs[i].get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
         lv_obj_align(icon_main_objs[i].get(), LV_ALIGN_CENTER, 0, 0);
-        lv_obj_clear_flag(icon_main_objs[i].get(), LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_set_scrollable(icon_main_objs[i].get(), false);
+        lv_obj_set_clickable(icon_main_objs[i].get(), false);
         // Icon image
         lv_obj_add_style(icon_image_objs[i].get(), _system_context.getDisplay().getCoreContainerStyle(), 0);
         lv_obj_align(icon_image_objs[i].get(), LV_ALIGN_CENTER, 0, 0);
         // lv_obj_set_size(icon_image_objs[i].get(), LV_SIZE_CONTENT, LV_SIZE_CONTENT);
         lv_image_set_inner_align(icon_image_objs[i].get(), LV_IMAGE_ALIGN_CENTER);
-        lv_obj_clear_flag(icon_image_objs[i].get(), LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_set_clickable(icon_image_objs[i].get(), false);
     }
     /* Visual flex */
     // Show animation
@@ -247,7 +249,7 @@ bool NavigationBar::show(void)
     ESP_UTILS_LOGD("Show");
     ESP_UTILS_CHECK_FALSE_RETURN(checkInitialized(), false, "Not initialized");
 
-    lv_obj_clear_flag(_main_obj.get(), LV_OBJ_FLAG_HIDDEN);
+    lv_obj_set_hidden(_main_obj.get(), false);
     lv_obj_align(_main_obj.get(), LV_ALIGN_BOTTOM_MID, 0, 0);
 
     return true;
@@ -258,7 +260,7 @@ bool NavigationBar::hide(void)
     ESP_UTILS_LOGD("Hide");
     ESP_UTILS_CHECK_FALSE_RETURN(checkInitialized(), false, "Not initialized");
 
-    lv_obj_add_flag(_main_obj.get(), LV_OBJ_FLAG_HIDDEN);
+    lv_obj_set_hidden(_main_obj.get(), true);
     lv_obj_align(_main_obj.get(), LV_ALIGN_BOTTOM_MID, 0, _data.main.size.height);
 
     return true;
@@ -268,7 +270,7 @@ bool NavigationBar::checkVisible(void) const
 {
     ESP_UTILS_CHECK_FALSE_RETURN(checkInitialized(), false, "Not initialized");
 
-    return !lv_obj_has_flag(_main_obj.get(), LV_OBJ_FLAG_HIDDEN);
+    return !lv_obj_is_hidden(_main_obj.get());
 }
 
 int NavigationBar::getCurrentOffset(void) const
@@ -411,7 +413,7 @@ bool NavigationBar::startFlexShowAnimation(bool enable_auto_hide)
     }
 
     _flags.enable_visual_flex_auto_hide = enable_auto_hide;
-    lv_obj_clear_flag(_main_obj.get(), LV_OBJ_FLAG_HIDDEN);
+    lv_obj_set_hidden(_main_obj.get(), false);
     lv_obj_move_foreground(_main_obj.get());
     lv_anim_set_values(_visual_flex_show_anim.get(), getCurrentOffset(), 0);
     ESP_UTILS_CHECK_NULL_RETURN(lv_anim_start(_visual_flex_show_anim.get()), false, "Start animation failed");
@@ -617,7 +619,7 @@ void NavigationBar::onVisualFlexHideAnimationReadyCallback(lv_anim_t *anim)
 
     ESP_UTILS_LOGD("Flex hide animation ready");
     navigation_bar->_flags.is_visual_flex_hide_anim_running = false;
-    lv_obj_add_flag(navigation_bar->_main_obj.get(), LV_OBJ_FLAG_HIDDEN);
+    lv_obj_set_hidden(navigation_bar->_main_obj.get(), true);
 }
 
 void NavigationBar::onVisualFlexHideTimerCallback(lv_timer_t *timer)
