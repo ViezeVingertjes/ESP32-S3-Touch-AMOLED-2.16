@@ -45,7 +45,7 @@ build instructions for the factory image are not included in this repository.
 
 ## 🧪 Examples and toolchains
 
-Five first-party ESP-IDF projects are tested with ESP-IDF `v5.5.5` and `v6.0.2`.
+Five first-party ESP-IDF projects are tested with ESP-IDF `v5.5.6` and `v6.1`.
 Seven first-party Arduino sketches are tested with Arduino-ESP32 `3.3.12`.
 Bundled library examples are intentionally excluded from the product matrix.
 

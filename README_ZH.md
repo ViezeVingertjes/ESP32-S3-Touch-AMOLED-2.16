@@ -43,7 +43,7 @@ Arduino 示例、出厂恢复固件、原理图和机械尺寸资料。
 
 ## 🧪 示例和工具链
 
-5 个第一方 ESP-IDF 项目使用 ESP-IDF `v5.5.5` 和 `v6.0.2` 测试；7 个第一方
+5 个第一方 ESP-IDF 项目使用 ESP-IDF `v5.5.6` 和 `v6.1` 测试；7 个第一方
 Arduino 草图使用 Arduino-ESP32 `3.3.12` 测试。随附库中的示例不进入产品矩阵。
 
 - [ESP-IDF 示例](examples/esp-idf/)
