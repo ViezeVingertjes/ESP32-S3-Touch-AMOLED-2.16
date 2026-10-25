@@ -29,7 +29,7 @@ jobs:
       arduino_count: ${{ steps.route.outputs.arduino_count }}
       firmware_changed: ${{ steps.route.outputs.firmware_changed }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Check repository documentation policy
@@ -61,7 +61,7 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJSON(needs.lightweight-gate.outputs.esp_idf_matrix) }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Build ${{ matrix.path }} with ESP-IDF ${{ matrix.idf }}
         shell: bash
         run: |
@@ -86,7 +86,7 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJSON(needs.lightweight-gate.outputs.arduino_matrix) }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: arduino/setup-arduino-cli@v2
       - name: Install ESP32 Arduino core
         run: |

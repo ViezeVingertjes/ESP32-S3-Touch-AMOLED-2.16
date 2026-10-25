@@ -200,7 +200,7 @@ class RoutingTests(unittest.TestCase):
 
     def test_workflow_uses_the_actual_routing_command_and_gate(self) -> None:
         workflow = (ROOT / ".github/workflows/examples.yml").read_text(encoding="utf-8")
-        self.assertEqual(workflow.count("uses: actions/checkout@v6"), 3)
+        self.assertEqual(workflow.count("uses: actions/checkout@v7"), 3)
         self.assertEqual(workflow.count("uses: actions/upload-artifact@v7"), 2)
         self.assertNotIn("actions/checkout@v4", workflow)
         self.assertNotIn("actions/upload-artifact@v4", workflow)
