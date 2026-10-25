@@ -22,8 +22,8 @@ HWCDC USBSerial;
 uint32_t screenWidth;
 uint32_t screenHeight;
 
-static lv_disp_draw_buf_t draw_buf;
-// static lv_color_t buf[screenWidth * screenHeight / 10];
+lv_display_t *disp;
+uint8_t *rotated_buf;
 
 Arduino_DataBus *bus = new Arduino_ESP32QSPI(
   LCD_CS /* CS */, LCD_SCLK /* SCK */, LCD_SDIO0 /* SDIO0 */, LCD_SDIO1 /* SDIO1 */,
@@ -55,8 +55,9 @@ void my_print(const char *buf) {
 }
 #endif
 
-void example_lvgl_rounder_cb(struct _lv_disp_drv_t *disp_drv, lv_area_t *area)
+void example_lvgl_rounder_cb(lv_event_t *e)
 {
+    lv_area_t *area = (lv_area_t *)lv_event_get_param(e);
     if(area->x1 % 2 !=0)area->x1--;
     if(area->y1 % 2 !=0)area->y1--;
     // 变为奇数(如果是偶数就加 1)
@@ -65,17 +66,27 @@ void example_lvgl_rounder_cb(struct _lv_disp_drv_t *disp_drv, lv_area_t *area)
 }
 
 /* Display flushing */
-void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p) {
-  uint32_t w = (area->x2 - area->x1 + 1);
-  uint32_t h = (area->y2 - area->y1 + 1);
+void my_disp_flush(lv_display_t *disp, const lv_area_t *area, uint8_t *px_map) {
+  // LVGL 9 does not rotate in software by itself; rotate the rendered area before sending it.
+  lv_display_rotation_t rotation = lv_display_get_rotation(disp);
+  lv_area_t rotated_area;
+  if (rotation != LV_DISPLAY_ROTATION_0) {
+    lv_color_format_t cf = lv_display_get_color_format(disp);
+    rotated_area = *area;
+    lv_display_rotate_area(disp, &rotated_area);
+    uint32_t src_stride = lv_draw_buf_width_to_stride(lv_area_get_width(area), cf);
+    uint32_t dest_stride = lv_draw_buf_width_to_stride(lv_area_get_width(&rotated_area), cf);
+    lv_draw_rotate(px_map, rotated_buf, lv_area_get_width(area), lv_area_get_height(area), src_stride, dest_stride, rotation, cf);
+    area = &rotated_area;
+    px_map = rotated_buf;
+  }
 
-#if (LV_COLOR_16_SWAP != 0)
-  gfx->draw16bitBeRGBBitmap(area->x1, area->y1, (uint16_t *)&color_p->full, w, h);
-#else
-  gfx->draw16bitRGBBitmap(area->x1, area->y1, (uint16_t *)&color_p->full, w, h);
-#endif
+  uint32_t w = lv_area_get_width(area);
+  uint32_t h = lv_area_get_height(area);
 
-  lv_disp_flush_ready(disp);
+  gfx->draw16bitRGBBitmap(area->x1, area->y1, (uint16_t *)px_map, w, h);
+
+  lv_display_flush_ready(disp);
 }
 
 void example_increase_lvgl_tick(void *arg) {
@@ -92,7 +103,7 @@ void example_increase_reboot(void *arg) {
 }
 
 /*Read the touchpad*/
-void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data) {
+void my_touchpad_read(lv_indev_t *indev, lv_indev_data_t *data) {
   if (!takeTouchInterrupt()) {
     return;
   }
@@ -100,7 +111,7 @@ void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data) {
   const TouchPoints &points = touch.getTouchPoints();
   if (points.hasPoints()) {
     const TouchPoint &point = points.getPoint(0);
-    data->state = LV_INDEV_STATE_PR;
+    data->state = LV_INDEV_STATE_PRESSED;
 
     /*Set the coordinates*/
     data->point.x = point.x;
@@ -112,7 +123,7 @@ void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data) {
     USBSerial.print("Data y ");
     USBSerial.println(point.y);
   } else {
-    data->state = LV_INDEV_STATE_REL;
+    data->state = LV_INDEV_STATE_RELEASED;
   }
 }
 
@@ -159,9 +170,10 @@ void setup() {
 
   lv_init();
 
-  lv_color_t *buf1 = (lv_color_t *)heap_caps_malloc(screenWidth * screenHeight / 4 * sizeof(lv_color_t), MALLOC_CAP_DMA);
-
-  lv_color_t *buf2 = (lv_color_t *)heap_caps_malloc(screenWidth * screenHeight / 4 * sizeof(lv_color_t), MALLOC_CAP_DMA);
+  const size_t buf_size = screenWidth * screenHeight / 4 * sizeof(uint16_t);
+  uint8_t *buf1 = (uint8_t *)heap_caps_aligned_alloc(LV_DRAW_BUF_ALIGN, buf_size, MALLOC_CAP_DMA);
+  uint8_t *buf2 = (uint8_t *)heap_caps_aligned_alloc(LV_DRAW_BUF_ALIGN, buf_size, MALLOC_CAP_DMA);
+  rotated_buf = (uint8_t *)heap_caps_aligned_alloc(LV_DRAW_BUF_ALIGN, buf_size, MALLOC_CAP_DMA);
 
   String LVGL_Arduino = "Hello Arduino! ";
   LVGL_Arduino += String('V') + lv_version_major() + "." + lv_version_minor() + "." + lv_version_patch();
@@ -175,27 +187,17 @@ void setup() {
   lv_log_register_print_cb(my_print); /* register print function for debugging */
 #endif
 
-  lv_disp_draw_buf_init(&draw_buf, buf1, buf2, screenWidth * screenHeight / 4);
-
   /*Initialize the display*/
-  static lv_disp_drv_t disp_drv;
-  lv_disp_drv_init(&disp_drv);
-  /*Change the following line to your display resolution*/
-  disp_drv.hor_res = screenWidth;
-  disp_drv.ver_res = screenHeight;
-  disp_drv.flush_cb = my_disp_flush;
-  disp_drv.rounder_cb = example_lvgl_rounder_cb;
-  disp_drv.draw_buf = &draw_buf;
-  disp_drv.sw_rotate = 1;  // add for rotation
-  // disp_drv.rotated = LV_DISP_ROT_90;
-  lv_disp_drv_register(&disp_drv);
+  disp = lv_display_create(screenWidth, screenHeight);
+  lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB565);
+  lv_display_set_flush_cb(disp, my_disp_flush);
+  lv_display_add_event_cb(disp, example_lvgl_rounder_cb, LV_EVENT_INVALIDATE_AREA, NULL);
+  lv_display_set_buffers(disp, buf1, buf2, buf_size, LV_DISPLAY_RENDER_MODE_PARTIAL);
 
-  /*Initialize the (dummy) input device driver*/
-  static lv_indev_drv_t indev_drv;
-  lv_indev_drv_init(&indev_drv);
-  indev_drv.type = LV_INDEV_TYPE_POINTER;
-  indev_drv.read_cb = my_touchpad_read;
-  lv_indev_drv_register(&indev_drv);
+  /*Initialize the touch input device*/
+  lv_indev_t *indev = lv_indev_create();
+  lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
+  lv_indev_set_read_cb(indev, my_touchpad_read);
 
   const esp_timer_create_args_t lvgl_tick_timer_args = {
     .callback = &example_increase_lvgl_tick,
@@ -226,16 +228,16 @@ void loop() {
       angleX = acc.mps2.x / kStandardGravity;
       angleY = acc.mps2.y / kStandardGravity;
       if (angleX > 0.8 && !rotation) {
-        lv_disp_set_rotation(NULL, LV_DISP_ROT_270);
+        lv_display_set_rotation(disp, LV_DISPLAY_ROTATION_270);
         rotation = true;
       } else if (angleX < -0.8 && !rotation) {
-        lv_disp_set_rotation(NULL, LV_DISP_ROT_90);
+        lv_display_set_rotation(disp, LV_DISPLAY_ROTATION_90);
         rotation = true;
       } else if (angleY < -0.8 && !rotation) {
-        lv_disp_set_rotation(NULL, LV_DISP_ROT_180);
+        lv_display_set_rotation(disp, LV_DISPLAY_ROTATION_180);
         rotation = true;
       } else if (angleY > 0.8 && !rotation) {
-        lv_disp_set_rotation(NULL, LV_DISP_ROT_NONE);
+        lv_display_set_rotation(disp, LV_DISPLAY_ROTATION_0);
         rotation = true;
       }
       if ((angleX <= 0.8 && angleX >= -0.8) && (angleY <= 0.8 && angleY >= -0.8)) {

@@ -13,8 +13,7 @@ bool adc_switch = false;
 lv_obj_t *info_label;
 bool backlight_on = true;
 
-static lv_disp_draw_buf_t draw_buf;
-static lv_color_t buf[LCD_WIDTH * LCD_HEIGHT / 10];
+alignas(LV_DRAW_BUF_ALIGN) static uint16_t buf[LCD_WIDTH * LCD_HEIGHT / 10];
 
 #define EXAMPLE_LVGL_TICK_PERIOD_MS 2
 
@@ -57,7 +56,8 @@ void my_print(const char *buf) {
 }
 #endif
 
-void example_lvgl_rounder_cb(struct _lv_disp_drv_t *disp_drv, lv_area_t *area) {
+void example_lvgl_rounder_cb(lv_event_t *e) {
+  lv_area_t *area = (lv_area_t *)lv_event_get_param(e);
   if (area->x1 % 2 != 0) area->x1--;
   if (area->y1 % 2 != 0) area->y1--;
   // 变为奇数(如果是偶数就加 1)
@@ -67,17 +67,13 @@ void example_lvgl_rounder_cb(struct _lv_disp_drv_t *disp_drv, lv_area_t *area) {
 
 
 /* Display flushing */
-void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p) {
-  uint32_t w = (area->x2 - area->x1 + 1);
-  uint32_t h = (area->y2 - area->y1 + 1);
+void my_disp_flush(lv_display_t *disp, const lv_area_t *area, uint8_t *px_map) {
+  uint32_t w = lv_area_get_width(area);
+  uint32_t h = lv_area_get_height(area);
 
-#if (LV_COLOR_16_SWAP != 0)
-  gfx->draw16bitBeRGBBitmap(area->x1, area->y1, (uint16_t *)&color_p->full, w, h);
-#else
-  gfx->draw16bitRGBBitmap(area->x1, area->y1, (uint16_t *)&color_p->full, w, h);
-#endif
+  gfx->draw16bitRGBBitmap(area->x1, area->y1, (uint16_t *)px_map, w, h);
 
-  lv_disp_flush_ready(disp);
+  lv_display_flush_ready(disp);
 }
 
 void example_increase_lvgl_tick(void *arg) {
@@ -136,24 +132,12 @@ void setup() {
 #endif
 
 
-  lv_disp_draw_buf_init(&draw_buf, buf, NULL, LCD_WIDTH * LCD_HEIGHT / 10);
-
   /*Initialize the display*/
-  static lv_disp_drv_t disp_drv;
-  lv_disp_drv_init(&disp_drv);
-  /*Change the following line to your display resolution*/
-  disp_drv.hor_res = LCD_WIDTH;
-  disp_drv.ver_res = LCD_HEIGHT;
-  disp_drv.flush_cb = my_disp_flush;
-  disp_drv.rounder_cb = example_lvgl_rounder_cb;
-  disp_drv.draw_buf = &draw_buf;
-  lv_disp_drv_register(&disp_drv);
-
-  /*Initialize the (dummy) input device driver*/
-  static lv_indev_drv_t indev_drv;
-  lv_indev_drv_init(&indev_drv);
-  indev_drv.type = LV_INDEV_TYPE_POINTER;
-  lv_indev_drv_register(&indev_drv);
+  lv_display_t *disp = lv_display_create(LCD_WIDTH, LCD_HEIGHT);
+  lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB565);
+  lv_display_set_flush_cb(disp, my_disp_flush);
+  lv_display_add_event_cb(disp, example_lvgl_rounder_cb, LV_EVENT_INVALIDATE_AREA, NULL);
+  lv_display_set_buffers(disp, buf, NULL, sizeof(buf), LV_DISPLAY_RENDER_MODE_PARTIAL);
 
   const esp_timer_create_args_t lvgl_tick_timer_args = {
     .callback = &example_increase_lvgl_tick,
@@ -169,7 +153,7 @@ void setup() {
   esp_timer_create(&lvgl_tick_timer_args, &lvgl_tick_timer);
   esp_timer_start_periodic(lvgl_tick_timer, EXAMPLE_LVGL_TICK_PERIOD_MS * 1000);
 
-  info_label = lv_label_create(lv_scr_act());
+  info_label = lv_label_create(lv_screen_active());
   lv_label_set_text(info_label, "Initializing...");
   lv_obj_align(info_label, LV_ALIGN_CENTER, 0, 0);
 
@@ -241,4 +225,4 @@ void loop() {
   lv_label_set_text(info_label, info.c_str());
   lv_obj_set_style_text_font(info_label, &lv_font_montserrat_20, LV_PART_MAIN);
   delay(20);
-}
+}
