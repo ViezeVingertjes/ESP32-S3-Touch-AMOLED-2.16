@@ -2,19 +2,14 @@
 #include <cstring>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "freertos/queue.h"
 #include "esp_log.h"
 #include "esp_err.h"
-#include "driver/gpio.h"
 #include "driver/i2c_master.h"
 #include "sdkconfig.h"
 
 #define TAG "main"
 
-// PMU interrupt and I2C config
-#define PMU_INPUT_PIN (gpio_num_t) CONFIG_PMU_INTERRUPT_PIN
-#define PMU_INPUT_PIN_SEL (1ULL << PMU_INPUT_PIN)
-
+// I2C config
 #define I2C_MASTER_NUM (i2c_port_num_t) CONFIG_I2C_MASTER_PORT_NUM
 #define I2C_MASTER_FREQ_HZ CONFIG_I2C_MASTER_FREQUENCY
 #define I2C_MASTER_SDA_IO (gpio_num_t) CONFIG_PMU_I2C_SDA
@@ -23,17 +18,10 @@
 
 static i2c_master_bus_handle_t i2c_bus_handle = NULL;
 static i2c_master_dev_handle_t pmu_dev_handle = NULL;
-static QueueHandle_t gpio_evt_queue = NULL;
 
 // Function declarations
 extern esp_err_t pmu_init();
 extern void pmu_isr_handler();
-
-// ISR for GPIO
-static void IRAM_ATTR pmu_irq_handler(void *arg) {
-    uint32_t gpio_num = (uint32_t)arg;
-    xQueueSendFromISR(gpio_evt_queue, &gpio_num, NULL);
-}
 
 // I2C init with new API
 esp_err_t i2c_init() {
@@ -94,9 +82,6 @@ static void pmu_hander_task(void *args) {
 }
 
 extern "C" void app_main(void) {
-    // gpio_evt_queue = xQueueCreate(5, sizeof(uint32_t));
-    // irq_init();
-
     ESP_ERROR_CHECK(i2c_init());
     ESP_LOGI(TAG, "I2C initialized successfully");
 
