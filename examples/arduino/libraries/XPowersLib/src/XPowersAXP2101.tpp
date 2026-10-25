@@ -30,6 +30,8 @@
 
 #if defined(ARDUINO)
 #include <Arduino.h>
+#else
+#include <math.h>
 #endif /*ARDUINO*/
 
 #include "XPowersCommon.tpp"
@@ -236,6 +238,14 @@ public:
     void deinit()
     {
         end();
+
+#if (ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5,0,0)) && defined(CONFIG_XPOWERS_ESP_IDF_NEW_API)
+        if (this->__i2c_device) {
+            i2c_master_bus_rm_device(this->__i2c_device);
+            this->__i2c_device = NULL;
+        }
+
+#endif //ESP_IDF_VERSION
     }
 
     /*
@@ -395,33 +405,15 @@ public:
         setRegisterBit(XPOWERS_AXP2101_COMMON_CONFIG, 0);
     }
 
-    /**
-     * @brief  BATFET control / REG 12H
-     * @note   DIE Over Temperature Protection Level1 Configuration
-     * @param  opt: 0:115 , 1:125 , 2:135
-     * @retval None
-     */
-    void setBatfetDieOverTempLevel1(uint8_t opt)
+    // datasheet v1.4 fixed
+    void enableBATFET(void)
     {
-        int val = readRegister(XPOWERS_AXP2101_BATFET_CTRL);
-        if (val == -1)return;
-        val &= 0xF9;
-        writeRegister(XPOWERS_AXP2101_BATFET_CTRL, val | (opt << 1));
+        setRegisterBit(XPOWERS_AXP2101_BATFET_CTRL, 3);
     }
 
-    uint8_t getBatfetDieOverTempLevel1(void)
+    void disableBATFET(void)
     {
-        return (readRegister(XPOWERS_AXP2101_BATFET_CTRL) & 0x06);
-    }
-
-    void enableBatfetDieOverTempDetect(void)
-    {
-        setRegisterBit(XPOWERS_AXP2101_BATFET_CTRL, 0);
-    }
-
-    void disableBatfetDieOverTempDetect(void)
-    {
-        clrRegisterBit(XPOWERS_AXP2101_BATFET_CTRL, 0);
+        clrRegisterBit(XPOWERS_AXP2101_BATFET_CTRL, 3);
     }
 
     /**
@@ -516,33 +508,61 @@ public:
     }
 
     /**
-     * @brief  Reset the fuel gauge
+     * @brief  Write Gauge Data
+     * @note   This function writes the provided gauge data to battery parameter.
+     * @param  *data: Pointer to the data buffer to compare.
+     * @param  len: Length of the data buffer (should be 128 bytes).
+     * @retval True if the data successfully wrote to ROM by comparing with the written data, false otherwise.
      */
-    void resetGauge(void)
+    bool writeGaugeData(uint8_t *data, uint8_t len)
     {
-        setRegisterBit(XPOWERS_AXP2101_RESET_FUEL_GAUGE, 3);
-    }
-
-    /**
-     * @brief   reset the gauge besides reset
-     */
-    void resetGaugeBesides(void)
-    {
+        if (len != 128 || data == NULL)return false;
+        // Reset gauge first
         setRegisterBit(XPOWERS_AXP2101_RESET_FUEL_GAUGE, 2);
+        clrRegisterBit(XPOWERS_AXP2101_RESET_FUEL_GAUGE, 2);
+        // Enabled ROM register
+        clrRegisterBit(XPOWERS_AXP2101_FUEL_GAUGE_CTRL, 0);
+        setRegisterBit(XPOWERS_AXP2101_FUEL_GAUGE_CTRL, 0);
+        // Write data to buffer
+        for (uint8_t i = 0; i < 128; i++) {
+            writeRegister(XPOWERS_AXP2101_BAT_PARAMS, data[i]);
+        }
+        // Reenable ROM register
+        clrRegisterBit(XPOWERS_AXP2101_FUEL_GAUGE_CTRL, 0);
+        setRegisterBit(XPOWERS_AXP2101_FUEL_GAUGE_CTRL, 0);
+
+        return compareGaugeData(data, len);
     }
 
     /**
-     * @brief Gauge Module
+     * @brief  Compare Gauge Data
+     * @note   This function compares the provided gauge data with the data in the gauge.
+     * @param  *data: Pointer to the data buffer to compare.
+     * @param  len: Length of the data buffer (should be 128 bytes).
+     * @retval True if the data matches, false otherwise.
      */
-    void enableGauge(void)
+    bool compareGaugeData(uint8_t *data, uint8_t len)
     {
-        setRegisterBit(XPOWERS_AXP2101_CHARGE_GAUGE_WDT_CTRL, 3);
+        if (len != 128 || data == NULL)return false;
+        // Reset gauge to load new data
+        uint8_t buffer[128];
+        memset(buffer, 0, sizeof(buffer));
+        // Reenable ROM register
+        clrRegisterBit(XPOWERS_AXP2101_FUEL_GAUGE_CTRL, 0);
+        setRegisterBit(XPOWERS_AXP2101_FUEL_GAUGE_CTRL, 0);
+        for (uint8_t i = 0; i < 128; i++) {
+            buffer[i] = readRegister(XPOWERS_AXP2101_BAT_PARAMS);
+        }
+        // Disable ROM register
+        clrRegisterBit(XPOWERS_AXP2101_FUEL_GAUGE_CTRL, 0);
+        // Set data interface
+        setRegisterBit(XPOWERS_AXP2101_FUEL_GAUGE_CTRL, 4);
+        // Reset gauge
+        setRegisterBit(XPOWERS_AXP2101_RESET_FUEL_GAUGE, 2);
+        clrRegisterBit(XPOWERS_AXP2101_RESET_FUEL_GAUGE, 2);
+        return memcmp(data, buffer, 128) == 0;
     }
 
-    void disableGauge(void)
-    {
-        clrRegisterBit(XPOWERS_AXP2101_CHARGE_GAUGE_WDT_CTRL, 3);
-    }
 
     /**
      * @brief  Button Battery charge
@@ -2223,9 +2243,14 @@ public:
         return clrRegisterBit(XPOWERS_AXP2101_ADC_CHANNEL_CTRL, 4);
     }
 
-    float getTemperature(void)
+    /*
+    * Temperature 14-bit ADC
+    */
+    float getTemperature(uint16_t * raw_ptr = nullptr)
     {
         uint16_t raw = readRegisterH6L8(XPOWERS_AXP2101_ADC_DATA_RELUST8, XPOWERS_AXP2101_ADC_DATA_RELUST9);
+        if (raw == UINT16_MAX || raw > 16383) return NAN;
+        if (raw_ptr) *raw_ptr = raw;
         return XPOWERS_AXP2101_CONVERSION(raw);
     }
 
@@ -2264,13 +2289,22 @@ public:
 
     bool enableTSPinMeasure(void)
     {
+        // TS pin is the battery temperature sensor input and will affect the charger
+        uint8_t value =  readRegister(XPOWERS_AXP2101_TS_PIN_CTRL);
+        value &= 0xE0;
+        writeRegister(XPOWERS_AXP2101_TS_PIN_CTRL, value | 0x07);
         return setRegisterBit(XPOWERS_AXP2101_ADC_CHANNEL_CTRL, 1);
     }
 
     bool disableTSPinMeasure(void)
     {
+        // TS pin is the external fixed input and doesn't affect the charger
+        uint8_t value =  readRegister(XPOWERS_AXP2101_TS_PIN_CTRL);
+        value &= 0xF0;
+        writeRegister(XPOWERS_AXP2101_TS_PIN_CTRL, value | 0x10);
         return clrRegisterBit(XPOWERS_AXP2101_ADC_CHANNEL_CTRL, 1);
     }
+
 
     bool enableTSPinLowFreqSample(void)
     {
@@ -2282,7 +2316,47 @@ public:
         return clrRegisterBit(XPOWERS_AXP2101_ADC_DATA_RELUST2, 7);
     }
 
-    uint16_t getTsTemperature(void)
+
+    /**
+     * Calculate temperature from TS pin ADC value using Steinhart-Hart equation.
+     *
+     * @param SteinhartA Steinhart-Hart coefficient A (default: 1.126e-3)
+     * @param SteinhartB Steinhart-Hart coefficient B (default: 2.38e-4)
+     * @param SteinhartC Steinhart-Hart coefficient C (default: 8.5e-8)
+     * @return Temperature in Celsius. Returns 0 if ADC value is 0x2000 (invalid measurement).
+     *
+     * @details
+     * This function converts the ADC reading from the TS pin to temperature using:
+     * 1. Voltage calculation: V = ADC_raw × 0.0005 (V)
+     * 2. Resistance calculation: R = V / I (Ω), where I = 50μA
+     * 3. Temperature calculation: T = 1/(A+B*ln(R)+C*(ln(R))^3) - 273.15 (℃)
+     *
+     * @note
+     * The calculation parameters are from the AXP2101 Datasheet, using the TH11-3H103F NTC resistor
+     *     as the Steinhart-Hart equation calculation parameters
+     * 1. Coefficients A, B, C should be calibrated for specific NTC thermistor.
+     * 2. ADC value 0x2000 indicates sensor fault (e.g., open circuit).
+     * 3. Valid temperature range: typically -20℃ to 60℃. Accuracy may degrade outside this range.
+     */
+    float getTsTemperature(float SteinhartA = 1.126e-3,
+                           float SteinhartB = 2.38e-4,
+                           float SteinhartC = 8.5e-8)
+    {
+        uint16_t  adc_raw =  getTsPinValue();  // Read raw ADC value from TS pin
+
+        // Check for invalid measurement (0x2000 indicates sensor disconnection)
+        if (adc_raw == 0x2000) {
+            return 0;
+        }
+        float current_ma = 0.05f;  // Current source: 50μA
+        float voltage = adc_raw * 0.0005f;  // Convert ADC value to voltage (V)
+        float resistance = voltage / (current_ma / 1000.0f);  // Calculate resistance (Ω)
+        // Convert resistance to temperature using Steinhart-Hart equation
+        return resistance_to_temperature(resistance, SteinhartA, SteinhartB, SteinhartC);
+    }
+
+    // raw value
+    uint16_t getTsPinValue(void)
     {
         return readRegisterH6L8(XPOWERS_AXP2101_ADC_DATA_RELUST2, XPOWERS_AXP2101_ADC_DATA_RELUST3);
     }
@@ -2505,25 +2579,6 @@ public:
         return (xpowers_thermal_t)(readRegister(XPOWERS_AXP2101_THE_REGU_THRES_SET) & 0x03);
     }
 
-    uint8_t getBatteryParameter()
-    {
-        return  readRegister(XPOWERS_AXP2101_BAT_PARAME);
-    }
-
-    void fuelGaugeControl(bool writeROM, bool enable)
-    {
-        if (writeROM) {
-            clrRegisterBit(XPOWERS_AXP2101_FUEL_GAUGE_CTRL, 4);
-        } else {
-            setRegisterBit(XPOWERS_AXP2101_FUEL_GAUGE_CTRL, 4);
-        }
-        if (enable) {
-            setRegisterBit(XPOWERS_AXP2101_FUEL_GAUGE_CTRL, 0);
-        } else {
-            clrRegisterBit(XPOWERS_AXP2101_FUEL_GAUGE_CTRL, 0);
-        }
-    }
-
     /*
      * Interrupt status/control functions
      */
@@ -2620,6 +2675,15 @@ public:
     bool isGaugeWdtTimeoutIrq()
     {
         uint8_t mask = XPOWERS_AXP2101_WDT_TIMEOUT_IRQ;
+        if (intRegister[0] & mask) {
+            return IS_BIT_SET(statusRegister[0], mask);
+        }
+        return false;
+    }
+
+    bool isStateOfChargeLowIrq(void)
+    {
+        uint8_t mask = XPOWERS_AXP2101_GAUGE_NEW_SOC_IRQ;
         if (intRegister[0] & mask) {
             return IS_BIT_SET(statusRegister[0], mask);
         }
@@ -2793,7 +2857,7 @@ public:
 
     bool isChargeOverTimeoutIrq(void)
     {
-        uint8_t mask = XPOWERS_AXP2101_CHAGER_TIMER_IRQ  >> 16;
+        uint8_t mask = XPOWERS_AXP2101_CHARGER_TIMER_IRQ  >> 16;
         if (intRegister[2] & mask) {
             return IS_BIT_SET(statusRegister[2], mask);
         }
@@ -3005,7 +3069,7 @@ protected:
         case XPOWERS_DLDO1:
             return setDLDO1Voltage(millivolt);
         case XPOWERS_DLDO2:
-            return setDLDO1Voltage(millivolt);
+            return setDLDO2Voltage(millivolt);
         case XPOWERS_VBACKUP:
             return setButtonBatteryChargeVoltage(millivolt);
         case XPOWERS_CPULDO:
@@ -3033,7 +3097,7 @@ protected:
     {
         int res = 0;
         uint8_t data = 0, value = 0;
-        log_d("%s - HEX:0x%x \n", enable ? "ENABLE" : "DISABLE", opts);
+        log_d("%s - HEX:0x %lx \n", enable ? "ENABLE" : "DISABLE", opts);
         if (opts & 0x0000FF) {
             value = opts & 0xFF;
             // log_d("Write INT0: %x\n", value);
@@ -3064,9 +3128,15 @@ protected:
     }
 
 private:
+
+    float resistance_to_temperature(float resistance, float SteinhartA,
+                                    float SteinhartB,
+                                    float SteinhartC)
+    {
+        float ln_r = log(resistance);
+        float t_inv = SteinhartA + SteinhartB * ln_r + SteinhartC * pow(ln_r, 3);
+        return (1.0f / t_inv) - 273.15f;
+    }
     uint8_t statusRegister[XPOWERS_AXP2101_INTSTS_CNT];
     uint8_t intRegister[XPOWERS_AXP2101_INTSTS_CNT];
 };
-
-
-

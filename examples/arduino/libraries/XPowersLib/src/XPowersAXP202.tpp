@@ -99,6 +99,11 @@ typedef enum {
     XPOWERS_AXP202_BACKUP_BAT_CUR_400UA,
 } xpowers_axp202_backup_batt_curr_t;
 
+typedef enum {
+    XPOWERS_AXP202_LDO3_MODE_LDO,
+    XPOWERS_AXP202_LDO3_MODE_DCIN
+} xpowers_axp202_ldo3_mode_t;
+
 
 class XPowersAXP202 :
     public XPowersCommon<XPowersAXP202>, public XPowersLibInterface
@@ -512,12 +517,14 @@ public:
     }
 
     /*
-    * Temperature
+    * Temperature 12-bit ADC
     */
-    float getTemperature()
+    float getTemperature(uint16_t * raw_ptr = nullptr)
     {
-        return readRegisterH8L4(XPOWERS_AXP202_INTERNAL_TEMP_H8, XPOWERS_AXP202_INTERNAL_TEMP_L4)
-               * XPOWERS_AXP202_INTERNAL_TEMP_STEP - XPOWERS_AXP202_INERNAL_TEMP_OFFSET;
+        uint16_t raw = readRegisterH8L4(XPOWERS_AXP202_INTERNAL_TEMP_H8, XPOWERS_AXP202_INTERNAL_TEMP_L4);
+        if (raw == UINT16_MAX || raw > 4095) return NAN;
+        if (raw_ptr) *raw_ptr = raw;
+        return raw * XPOWERS_AXP202_INTERNAL_TEMP_STEP - XPOWERS_AXP202_INTERNAL_TEMP_OFFSET;
     }
 
     bool enableTemperatureMeasure()
@@ -642,6 +649,26 @@ public:
         return clrRegisterBit(XPOWERS_AXP202_LDO234_DC23_CTL, 6);
     }
 
+    //! Only AXP202 support
+    bool isLDO3LDOMode(void)
+    {
+        return getRegisterBit(XPOWERS_AXP202_LDO3OUT_VOL, 7);
+    }
+
+    //! Only AXP202 support
+    void setLDO3Mode(xpowers_axp202_ldo3_mode_t mode)
+    {
+        switch (mode) {
+        case XPOWERS_AXP202_LDO3_MODE_LDO:
+            clrRegisterBit(XPOWERS_AXP202_LDO3OUT_VOL, 7);
+            break;
+        case XPOWERS_AXP202_LDO3_MODE_DCIN:
+            setRegisterBit(XPOWERS_AXP202_LDO3OUT_VOL, 7);
+            break;
+        default:
+            break;
+        }
+    }
 
     bool setLDO3Voltage(uint16_t millivolt)
     {
