@@ -11,5 +11,7 @@ target_compile_options(
     PRIVATE
         -DLV_LVGL_H_INCLUDE_SIMPLE
         -DLV_USE_DEMO_MUSIC
+        # shortcut: LVGL 9.6 repeats IRAM section attributes when CONFIG_LV_ATTRIBUTE_FAST_MEM_USE_IRAM=y,
+        # which IDF 6.1 rejects (-Werror=attributes); applies to the LVGL component only.
         -Wno-attributes
 )
