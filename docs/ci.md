@@ -10,7 +10,10 @@ empty or its base is unavailable.
 ESP-IDF discovery covers the five direct projects in `examples/esp-idf/` with
 `v5.5.6` and `v6.1`. Arduino discovery covers the seven direct sketches in
 `examples/arduino/` with core `3.3.12`; `examples/arduino/libraries/**` is not a
-product sketch. `workflow_dispatch` accepts `all`, a project/sketch name, or a
+product sketch. Sketches compile with `--warnings all` for the board's 16 MB
+flash, 3 MB app partition, and OPI PSRAM
+(`esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi`).
+`workflow_dispatch` accepts `all`, a project/sketch name, or a
 repository-relative example path.
 
 Markdown at the root, inside an example, beside a sketch, or in a bundled

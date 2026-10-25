@@ -49,6 +49,11 @@ Five first-party ESP-IDF projects are tested with ESP-IDF `v5.5.6` and `v6.1`.
 Seven first-party Arduino sketches are tested with Arduino-ESP32 `3.3.12`.
 Bundled library examples are intentionally excluded from the product matrix.
 
+In the Arduino IDE, select **ESP32S3 Dev Module** with Flash Size **16MB**,
+Partition Scheme **16M Flash (3MB APP/9.9MB FATFS)**, and PSRAM **OPI PSRAM**
+(FQBN `esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi`).
+The default 4 MB layout is too small for the LVGL sketches.
+
 - [ESP-IDF examples](examples/esp-idf/)
 - [Arduino examples](examples/arduino/)
 - [Continuous integration](docs/ci.md)

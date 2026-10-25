@@ -46,6 +46,11 @@ Arduino 示例、出厂恢复固件、原理图和机械尺寸资料。
 5 个第一方 ESP-IDF 项目使用 ESP-IDF `v5.5.6` 和 `v6.1` 测试；7 个第一方
 Arduino 草图使用 Arduino-ESP32 `3.3.12` 测试。随附库中的示例不进入产品矩阵。
 
+在 Arduino IDE 中选择 **ESP32S3 Dev Module**，Flash Size 设为 **16MB**，
+Partition Scheme 设为 **16M Flash (3MB APP/9.9MB FATFS)**，PSRAM 设为 **OPI PSRAM**
+（FQBN `esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi`）。
+默认的 4 MB 布局放不下 LVGL 草图。
+
 - [ESP-IDF 示例](examples/esp-idf/)
 - [Arduino 示例](examples/arduino/)
 - [持续集成](docs/ci_ZH.md)
