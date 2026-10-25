@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <driver/i2s.h>
+#include <ESP_I2S.h>
 #include <esp_vad.h>
 #include "es7210.h"
 #include "pin_config.h"
@@ -7,17 +7,16 @@
 #define VAD_SAMPLE_RATE_HZ 16000
 #define VAD_FRAME_LENGTH_MS 30
 #define VAD_BUFFER_LENGTH (VAD_FRAME_LENGTH_MS * VAD_SAMPLE_RATE_HZ / 1000)
-#define I2S_CH I2S_NUM_1
 
+I2SClass i2s;
 int16_t *vad_buff;
 vad_handle_t vad_inst;
-size_t bytes_read;
 
 void setup() {
 
   Serial.begin(115200);
-  Serial.printf("psram size : %d kb\r\n", ESP.getPsramSize() / 1024);
-  Serial.printf("FLASH size : %d kb\r\n", ESP.getFlashChipSize() / 1024);
+  Serial.printf("psram size : %lu kb\r\n", (unsigned long)(ESP.getPsramSize() / 1024));
+  Serial.printf("FLASH size : %lu kb\r\n", (unsigned long)(ESP.getFlashChipSize() / 1024));
   Wire.begin(15, 14);
 
   delay(200);
@@ -47,32 +46,14 @@ void setup() {
 
 
 
-  i2s_config_t i2s_config = {
-    .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX),
-    .sample_rate = VAD_SAMPLE_RATE_HZ,
-    .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
-    .channel_format = I2S_CHANNEL_FMT_ALL_LEFT,
-    .communication_format = I2S_COMM_FORMAT_STAND_I2S,
-    .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
-    .dma_buf_count = 8,
-    .dma_buf_len = 64,
-    .use_apll = false,
-    .tx_desc_auto_clear = true,
-    .fixed_mclk = 0,
-    .mclk_multiple = I2S_MCLK_MULTIPLE_256,
-    .bits_per_chan = I2S_BITS_PER_CHAN_16BIT,
-    .chan_mask = (i2s_channel_t)(I2S_TDM_ACTIVE_CH0 | I2S_TDM_ACTIVE_CH1),
-  };
-
-  i2s_pin_config_t pin_config = { 0 };
-  pin_config.bck_io_num = PIN_ES7210_BCLK;
-  pin_config.ws_io_num = PIN_ES7210_LRCK;
-  pin_config.data_in_num = PIN_ES7210_DIN;
-  pin_config.mck_io_num = PIN_ES7210_MCLK;
-  i2s_driver_install(I2S_CH, &i2s_config, 0, NULL);
-  i2s_set_pin(I2S_CH, &pin_config);
-  i2s_zero_dma_buffer(I2S_CH);
-  // i2s_start(I2S_NUM_1);
+  // Standard I2S master RX, left slot only (MIC1), 256x MCLK for the ES7210.
+  i2s.setPins(PIN_ES7210_BCLK, PIN_ES7210_LRCK, -1 /* DOUT */, PIN_ES7210_DIN, PIN_ES7210_MCLK);
+  if (!i2s.begin(I2S_MODE_STD, VAD_SAMPLE_RATE_HZ, I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_MONO, I2S_STD_SLOT_LEFT)) {
+    while (1) {
+      Serial.println("Failed to initialize I2S!");
+      delay(1000);
+    }
+  }
 
 
   vad_inst = vad_create(VAD_MODE_0);
@@ -86,7 +67,7 @@ void setup() {
 }
 
 void loop() {
-  i2s_read(I2S_CH, (char *)vad_buff, VAD_BUFFER_LENGTH * sizeof(short), &bytes_read, portMAX_DELAY);
+  i2s.readBytes((char *)vad_buff, VAD_BUFFER_LENGTH * sizeof(short));
   // Feed samples to the VAD process and get the result
   vad_state_t vad_state = vad_process(vad_inst, vad_buff, VAD_SAMPLE_RATE_HZ, VAD_FRAME_LENGTH_MS);
   if (vad_state == VAD_SPEECH) {
