@@ -19,7 +19,7 @@ from discover_examples import discover_arduino, discover_esp_idf
 
 
 IDF_VERSIONS = ("v5.5.5", "v6.0.2")
-ARDUINO_CORE = "3.3.11"
+ARDUINO_CORE = "3.3.12"
 FQBN = "esp32:esp32:esp32s3"
 CONFIG_KEYS = {
     "build_override_patterns",
