@@ -81,14 +81,6 @@ void example_increase_lvgl_tick(void *arg) {
   lv_tick_inc(EXAMPLE_LVGL_TICK_PERIOD_MS);
 }
 
-static uint8_t count = 0;
-void example_increase_reboot(void *arg) {
-  count++;
-  if (count == 30) {
-    esp_restart();
-  }
-}
-
 void setup() {
   Serial.begin(115200); /* prepare for possible serial debug */
 
@@ -144,11 +136,6 @@ void setup() {
     .name = "lvgl_tick"
   };
 
-  const esp_timer_create_args_t reboot_timer_args = {
-    .callback = &example_increase_reboot,
-    .name = "reboot"
-  };
-
   esp_timer_handle_t lvgl_tick_timer = NULL;
   esp_timer_create(&lvgl_tick_timer_args, &lvgl_tick_timer);
   esp_timer_start_periodic(lvgl_tick_timer, EXAMPLE_LVGL_TICK_PERIOD_MS * 1000);
@@ -168,7 +155,7 @@ void loop() {
   if (pmu_flag) {
     pmu_flag = false;
     // Get PMU Interrupt Status Register
-    uint32_t status = power.getIrqStatus();
+    power.getIrqStatus();
     if (power.isPekeyShortPressIrq()) {
       if (adc_switch) {
         adcOn();

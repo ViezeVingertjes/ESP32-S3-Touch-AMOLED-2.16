@@ -52,14 +52,6 @@ void example_increase_lvgl_tick(void *arg) {
   lv_tick_inc(EXAMPLE_LVGL_TICK_PERIOD_MS);
 }
 
-static uint8_t count = 0;
-void example_increase_reboot(void *arg) {
-  count++;
-  if (count == 30) {
-    esp_restart();
-  }
-}
-
 void setup() {
   Serial.begin(115200); /* prepare for possible serial debug */
   Wire.begin(IIC_SDA, IIC_SCL);
@@ -93,11 +85,6 @@ void setup() {
   const esp_timer_create_args_t lvgl_tick_timer_args = {
     .callback = &example_increase_lvgl_tick,
     .name = "lvgl_tick"
-  };
-
-  const esp_timer_create_args_t reboot_timer_args = {
-    .callback = &example_increase_reboot,
-    .name = "reboot"
   };
 
   esp_timer_handle_t lvgl_tick_timer = NULL;
